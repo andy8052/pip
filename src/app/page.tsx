@@ -80,7 +80,7 @@ function IconCoins({ className }: { className?: string }) {
   );
 }
 
-function IconShield({ className }: { className?: string }) {
+function IconLock({ className }: { className?: string }) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -94,8 +94,8 @@ function IconShield({ className }: { className?: string }) {
       strokeLinejoin="round"
       className={className}
     >
-      <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z" />
-      <path d="m9 12 2 2 4-4" />
+      <rect width="18" height="11" x="3" y="11" rx="2" ry="2" />
+      <path d="M7 11V7a5 5 0 0 1 10 0v4" />
     </svg>
   );
 }
@@ -202,7 +202,7 @@ const STEPS = [
     number: "03",
     title: "Launch & earn",
     description:
-      "Deploy on Base via Clanker v4. The profile owner can claim 80% of trading fees plus vesting tokens at any time.",
+      "Deploy on Base via Clanker v4. The profile owner receives 10% of the total supply vested over time, plus 80% of all trading fees — claimable at any time.",
     icon: IconCoins,
   },
 ] as const;
@@ -215,22 +215,22 @@ const FEATURES = [
       "Tokens deploy in a single transaction on Base. No waiting, no complex setup — just launch and go.",
   },
   {
+    icon: IconLock,
+    title: "10% vested for creators",
+    description:
+      "10% of every token's supply is reserved and vested for the X profile it's created for. Aligned incentives from day one — creators earn as the community grows.",
+  },
+  {
     icon: IconTrendingUp,
     title: "80% fee sharing",
     description:
-      "Profile owners claim the majority of trading fees. Fair economics that reward the people tokens are created for.",
-  },
-  {
-    icon: IconShield,
-    title: "Built on Clanker v4",
-    description:
-      "The latest version of the Clanker protocol with improved security, gas efficiency, and vesting mechanics.",
+      "On top of vested tokens, profile owners claim 80% of all trading fees. Fair economics that reward the people tokens are created for.",
   },
   {
     icon: IconLink,
     title: "Fully on-chain",
     description:
-      "Everything runs on Base L2 — transparent, verifiable, and permissionless. No centralized points of failure.",
+      "Built on Clanker v4, everything runs on Base L2 — transparent, verifiable, and permissionless. No centralized points of failure.",
   },
 ] as const;
 
@@ -277,8 +277,8 @@ export default function LandingPage() {
                 className="max-w-xl text-[var(--text-lg)] leading-[var(--leading-relaxed)]"
               >
                 Create a token for anyone on X in seconds. The profile owner
-                claims 80% of trading fees and vesting tokens — no sign-up
-                required.
+                gets 10% of the supply vested to them plus 80% of all trading
+                fees — no sign-up required.
               </Text>
             </VStack>
 
@@ -340,7 +340,7 @@ export default function LandingPage() {
 
                     <Separator />
 
-                    <div className="grid grid-cols-3 gap-[var(--space-4)]">
+                    <div className="grid grid-cols-2 gap-[var(--space-4)] sm:grid-cols-4">
                       <VStack gap="none" align="center">
                         <Text variant="caption" color="subtle">
                           For
@@ -350,6 +350,17 @@ export default function LandingPage() {
                           className="font-[var(--font-medium)] text-[var(--accent-default)]"
                         >
                           @creator
+                        </Text>
+                      </VStack>
+                      <VStack gap="none" align="center">
+                        <Text variant="caption" color="subtle">
+                          Vested supply
+                        </Text>
+                        <Text
+                          variant="body-sm"
+                          className="font-[var(--font-medium)] text-[var(--color-warning-400)]"
+                        >
+                          10%
                         </Text>
                       </VStack>
                       <VStack gap="none" align="center">
@@ -500,10 +511,10 @@ export default function LandingPage() {
         <Container className="py-[var(--space-10)] sm:py-[var(--space-12)]">
           <div className="grid grid-cols-2 gap-[var(--space-8)] sm:grid-cols-4">
             {[
-              { value: "80%", label: "Fee share for creators" },
+              { value: "10%", label: "Supply vested for creator" },
+              { value: "80%", label: "Trading fees to creator" },
               { value: "1-click", label: "Token deployment" },
               { value: "Base L2", label: "Fast & low cost" },
-              { value: "v4", label: "Latest Clanker protocol" },
             ].map((stat) => (
               <VStack key={stat.label} align="center" gap="xs">
                 <Text

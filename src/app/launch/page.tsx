@@ -7,7 +7,7 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Launch a Token - pip",
   description:
-    "Launch a Clanker v4 token on Base for any X profile. The profile owner can claim 80% of trading fees + vesting tokens.",
+    "Launch a Clanker v4 token on Base for any X profile. 10% of supply is vested for the profile owner, plus 80% of trading fees.",
 };
 
 export default function LaunchPage() {
@@ -17,8 +17,8 @@ export default function LaunchPage() {
         <VStack align="center" gap="sm" className="pt-[var(--space-4)] sm:pt-[var(--space-8)] sm:gap-[var(--space-4)] text-center">
           <Text variant="display">pip</Text>
           <Text variant="body-sm" className="max-w-lg px-[var(--space-2)]" align="center">
-            Launch a Clanker v4 token on Base for any X profile. The profile owner
-            can claim 80% of trading fees + vesting tokens.
+            Launch a Clanker v4 token on Base for any X profile. 10% of the
+            supply is vested for the profile owner, plus 80% of all trading fees.
           </Text>
         </VStack>
 
