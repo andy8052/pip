@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { LaunchForm } from "@/components/launch-form";
 import { TokenList } from "@/components/token-list";
 
@@ -13,14 +14,28 @@ export default function Home() {
       </section>
 
       <section className="flex justify-center">
-        <LaunchForm />
+        <Suspense
+          fallback={
+            <div className="h-80 w-full max-w-md animate-pulse rounded-xl bg-zinc-900" />
+          }
+        >
+          <LaunchForm />
+        </Suspense>
       </section>
 
       <section>
         <h2 className="text-xl font-semibold text-white mb-4">
           Recently Launched
         </h2>
-        <TokenList />
+        <Suspense
+          fallback={
+            <div className="text-center text-zinc-500 py-8">
+              Loading tokens...
+            </div>
+          }
+        >
+          <TokenList />
+        </Suspense>
       </section>
     </div>
   );

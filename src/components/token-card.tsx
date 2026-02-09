@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import type { TokenLaunch } from "@/types";
 
 function StatusBadge({ status }: { status: string }) {
@@ -25,10 +26,13 @@ export function TokenCard({ launch }: { launch: TokenLaunch }) {
       <div className="flex items-start justify-between">
         <div className="flex items-center gap-3">
           {launch.tokenImageUrl ? (
-            <img
+            <Image
               src={launch.tokenImageUrl}
               alt={launch.tokenName}
+              width={40}
+              height={40}
               className="h-10 w-10 rounded-full object-cover"
+              unoptimized
             />
           ) : (
             <div className="h-10 w-10 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-500 text-sm font-bold">
