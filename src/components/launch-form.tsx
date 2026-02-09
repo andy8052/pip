@@ -223,26 +223,26 @@ export function LaunchForm() {
                 {result.tokenName} (${result.tokenSymbol})
               </Text>
               {result.tokenAddress && (
-                <Text variant="body-sm" as="p" className="break-all">
+                <Text variant="body-sm" as="p" className="break-all overflow-hidden">
                   <Text variant="caption" as="span">Address:</Text>{" "}
                   <a
                     href={`https://basescan.org/address/${result.tokenAddress}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-[var(--accent-default)] hover:underline underline-offset-4"
+                    className="text-[var(--accent-default)] hover:underline underline-offset-4 text-[var(--text-xs)] sm:text-[var(--text-sm)]"
                   >
                     {result.tokenAddress}
                   </a>
                 </Text>
               )}
               {result.deployTxHash && (
-                <Text variant="body-sm" as="p" className="break-all">
+                <Text variant="body-sm" as="p" className="break-all overflow-hidden">
                   <Text variant="caption" as="span">Tx:</Text>{" "}
                   <a
                     href={`https://basescan.org/tx/${result.deployTxHash}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-[var(--accent-default)] hover:underline underline-offset-4"
+                    className="text-[var(--accent-default)] hover:underline underline-offset-4 text-[var(--text-xs)] sm:text-[var(--text-sm)]"
                   >
                     {result.deployTxHash}
                   </a>

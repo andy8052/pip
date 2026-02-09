@@ -17,15 +17,15 @@ import { cn } from "../utils";
 const textVariants = cva("", {
   variants: {
     variant: {
-      /* Display / Hero — for landing page headlines */
+      /* Display / Hero — for landing page headlines (responsive via token) */
       display: [
-        "text-[var(--text-5xl)] font-[var(--font-bold)]",
+        "text-[var(--text-display)] font-[var(--font-bold)]",
         "leading-[var(--leading-none)] tracking-[var(--tracking-tighter)]",
         "text-[var(--fg-default)]",
       ].join(" "),
-      /* H1 — Page title */
+      /* H1 — Page title (responsive via token) */
       h1: [
-        "text-[var(--text-4xl)] font-[var(--font-bold)]",
+        "text-[var(--text-page-title)] font-[var(--font-bold)]",
         "leading-[var(--leading-tight)] tracking-[var(--tracking-tight)]",
         "text-[var(--fg-default)]",
       ].join(" "),

@@ -5,10 +5,10 @@ import { VStack, Text, Skeleton } from "@/design-system";
 
 export default function Home() {
   return (
-    <VStack gap="2xl">
-      <VStack align="center" gap="md" className="pt-[var(--space-8)] text-center">
+    <VStack gap="xl" className="sm:gap-[var(--space-12)]">
+      <VStack align="center" gap="sm" className="pt-[var(--space-4)] sm:pt-[var(--space-8)] sm:gap-[var(--space-4)] text-center">
         <Text variant="display">pip</Text>
-        <Text variant="body-sm" className="max-w-lg" align="center">
+        <Text variant="body-sm" className="max-w-lg px-[var(--space-2)]" align="center">
           Launch a Clanker v4 token on Base for any X profile. The profile owner
           can claim 80% of trading fees + vesting tokens.
         </Text>

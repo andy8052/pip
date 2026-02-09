@@ -135,7 +135,7 @@ const FileUpload = forwardRef<HTMLInputElement, FileUploadProps>(
                 ? "border-[var(--status-danger)]"
                 : "border-[var(--border-default)]",
               "bg-[var(--bg-raised)]",
-              "px-[var(--space-3)] py-[var(--space-6)]",
+              "px-[var(--space-3)] py-[var(--space-4)] sm:py-[var(--space-6)]",
               "text-[var(--fg-subtle)]",
               "hover:border-[var(--border-strong)] hover:text-[var(--fg-muted)]",
               "transition-colors duration-150",

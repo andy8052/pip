@@ -349,6 +349,31 @@
 
   --container-max: 64rem;     /* 1024px — max-w-5xl equivalent */
   --container-padding: var(--space-4);
+
+  /* Responsive display text — scales down for mobile */
+  --text-display: var(--text-4xl);      /* 48px on mobile */
+  --text-page-title: var(--text-2xl);   /* 30px on mobile */
+}
+
+/* --------------------------------------------------------------------------
+ * RESPONSIVE TOKEN OVERRIDES
+ *
+ * Progressive enhancement: tokens scale up as viewport grows.
+ * Mobile-first approach — base values above, enhancements below.
+ * -------------------------------------------------------------------------- */
+
+@media (min-width: 640px) {
+  :root {
+    --container-padding: var(--space-6);          /* 24px at sm */
+    --text-display: var(--text-5xl);              /* 60px at sm+ */
+    --text-page-title: var(--text-3xl);           /* 36px at sm+ */
+  }
+}
+
+@media (min-width: 1024px) {
+  :root {
+    --container-padding: var(--space-8);          /* 32px at lg+ */
+  }
 }
 
 /* --------------------------------------------------------------------------

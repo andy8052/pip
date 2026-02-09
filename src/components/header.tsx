@@ -18,8 +18,8 @@ export function Header() {
   return (
     <header className="bg-[var(--bg-subtle)] border-b border-[var(--border-default)]">
       <Container>
-        <HStack align="center" justify="between" className="py-[var(--space-3)]">
-          <HStack align="center" gap="lg">
+        <HStack align="center" justify="between" className="py-[var(--space-3)] min-h-[48px]">
+          <HStack align="center" gap="sm" className="sm:gap-[var(--space-6)]">
             <Link href="/" className="no-underline">
               <Logo size="md" />
             </Link>
@@ -34,7 +34,13 @@ export function Header() {
             {authenticated ? (
               <>
                 {twitterUsername && (
-                  <Text variant="body-sm" color="muted" as="span">
+                  <Text
+                    variant="body-sm"
+                    color="muted"
+                    as="span"
+                    truncate
+                    className="hidden sm:inline max-w-[120px] md:max-w-none"
+                  >
                     @{twitterUsername}
                   </Text>
                 )}
