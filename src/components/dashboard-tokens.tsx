@@ -4,6 +4,12 @@ import { useEffect, useState, useCallback } from "react";
 import { usePrivy } from "@privy-io/react-auth";
 import { TokenCard } from "./token-card";
 import { ClaimButton } from "./claim-button";
+import {
+  Text,
+  VStack,
+  Spinner,
+  EmptyState,
+} from "@/design-system";
 import type { TokenLaunch, AppUser } from "@/types";
 
 export function DashboardTokens() {
@@ -38,23 +44,25 @@ export function DashboardTokens() {
 
   if (!authenticated) {
     return (
-      <div className="text-center text-zinc-500 py-8">
-        Sign in with X to see your claimable tokens.
-      </div>
+      <EmptyState
+        description="Sign in with X to see your claimable tokens."
+      />
     );
   }
 
   if (loading) {
     return (
-      <div className="text-center text-zinc-500 py-8">Loading...</div>
+      <div className="flex justify-center py-[var(--space-8)]">
+        <Spinner size="lg" label="Loading dashboard" />
+      </div>
     );
   }
 
   if (!user) {
     return (
-      <div className="text-center text-zinc-500 py-8">
-        Unable to load user data.
-      </div>
+      <EmptyState
+        description="Unable to load user data."
+      />
     );
   }
 
@@ -62,53 +70,47 @@ export function DashboardTokens() {
   const claimedTokens = claimableTokens.filter((t) => t.claimed);
 
   return (
-    <div className="space-y-8">
-      <div>
-        <p className="text-zinc-400">
-          Signed in as{" "}
-          <span className="text-white font-medium">
-            @{user.twitterUsername}
-          </span>
-        </p>
-      </div>
+    <VStack gap="xl">
+      <Text variant="body-sm" as="p">
+        Signed in as{" "}
+        <Text variant="body" as="span" className="font-[var(--font-medium)]">
+          @{user.twitterUsername}
+        </Text>
+      </Text>
 
       {unclaimedTokens.length > 0 && (
-        <div>
-          <h2 className="text-lg font-semibold text-white mb-4">
-            Tokens Available to Claim
-          </h2>
-          <div className="grid gap-4 sm:grid-cols-2">
+        <VStack gap="md">
+          <Text variant="h3">Tokens Available to Claim</Text>
+          <div className="grid gap-[var(--space-4)] sm:grid-cols-2">
             {unclaimedTokens.map((token) => (
-              <div key={token.id} className="space-y-3">
+              <VStack key={token.id} gap="sm">
                 <TokenCard launch={token} />
                 <ClaimButton launch={token} onClaimed={fetchData} />
-              </div>
+              </VStack>
             ))}
           </div>
-        </div>
+        </VStack>
       )}
 
       {claimedTokens.length > 0 && (
-        <div>
-          <h2 className="text-lg font-semibold text-white mb-4">
-            Claimed Tokens
-          </h2>
-          <div className="grid gap-4 sm:grid-cols-2">
+        <VStack gap="md">
+          <Text variant="h3">Claimed Tokens</Text>
+          <div className="grid gap-[var(--space-4)] sm:grid-cols-2">
             {claimedTokens.map((token) => (
-              <div key={token.id} className="space-y-3">
+              <VStack key={token.id} gap="sm">
                 <TokenCard launch={token} />
                 <ClaimButton launch={token} onClaimed={fetchData} />
-              </div>
+              </VStack>
             ))}
           </div>
-        </div>
+        </VStack>
       )}
 
       {claimableTokens.length === 0 && (
-        <div className="text-center text-zinc-500 py-8">
-          No tokens have been launched for your X profile yet.
-        </div>
+        <EmptyState
+          description="No tokens have been launched for your X profile yet."
+        />
       )}
-    </div>
+    </VStack>
   );
 }

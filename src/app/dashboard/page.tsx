@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import { DashboardTokens } from "@/components/dashboard-tokens";
+import { VStack, Text, Spinner } from "@/design-system";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -10,19 +11,23 @@ export const metadata: Metadata = {
 
 export default function DashboardPage() {
   return (
-    <div className="space-y-6">
-      <h1 className="text-2xl font-bold text-white">Your Dashboard</h1>
-      <p className="text-zinc-400">
-        Tokens launched for your X profile appear here. Claim them to receive
-        80% of trading fees and vesting tokens.
-      </p>
+    <VStack gap="lg">
+      <VStack gap="xs">
+        <Text variant="h1" className="text-[var(--text-2xl)]">Your Dashboard</Text>
+        <Text variant="body-sm">
+          Tokens launched for your X profile appear here. Claim them to receive
+          80% of trading fees and vesting tokens.
+        </Text>
+      </VStack>
       <Suspense
         fallback={
-          <div className="text-center text-zinc-500 py-8">Loading...</div>
+          <div className="flex justify-center py-[var(--space-8)]">
+            <Spinner size="lg" label="Loading dashboard" />
+          </div>
         }
       >
         <DashboardTokens />
       </Suspense>
-    </div>
+    </VStack>
   );
 }
