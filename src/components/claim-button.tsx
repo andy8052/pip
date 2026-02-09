@@ -3,6 +3,13 @@
 import { useState } from "react";
 import { usePrivy } from "@privy-io/react-auth";
 import type { TokenLaunch } from "@/types";
+import {
+  Button,
+  Input,
+  HStack,
+  VStack,
+  Text,
+} from "@/design-system";
 
 interface ClaimButtonProps {
   launch: TokenLaunch;
@@ -18,12 +25,12 @@ export function ClaimButton({ launch, onClaimed }: ClaimButtonProps) {
 
   if (launch.claimed) {
     return (
-      <div className="text-sm text-green-500">
+      <Text variant="body-sm" color="success" as="div">
         Claimed to{" "}
-        <span className="font-mono text-xs break-all">
+        <Text variant="code" as="span" className="break-all">
           {launch.claimerWalletAddress}
-        </span>
-      </div>
+        </Text>
+      </Text>
     );
   }
 
@@ -61,43 +68,52 @@ export function ClaimButton({ launch, onClaimed }: ClaimButtonProps) {
 
   if (!showForm) {
     return (
-      <button
+      <Button
+        variant="success"
+        size="sm"
         onClick={() => setShowForm(true)}
-        className="rounded-lg bg-green-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-green-500 transition-colors"
       >
         Claim Token
-      </button>
+      </Button>
     );
   }
 
   return (
-    <form onSubmit={handleClaim} className="space-y-2">
-      <input
-        type="text"
-        placeholder="Your wallet address (0x...)"
-        value={walletAddress}
-        onChange={(e) => setWalletAddress(e.target.value)}
-        className="w-full rounded-lg border border-zinc-700 bg-zinc-800 px-3 py-1.5 text-sm text-white placeholder-zinc-500 focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500"
-        pattern="^0x[a-fA-F0-9]{40}$"
-        required
-      />
-      <div className="flex gap-2">
-        <button
-          type="submit"
-          disabled={loading}
-          className="rounded-lg bg-green-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-green-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-        >
-          {loading ? "Claiming..." : "Confirm Claim"}
-        </button>
-        <button
-          type="button"
-          onClick={() => setShowForm(false)}
-          className="rounded-lg bg-zinc-800 px-3 py-1.5 text-sm text-zinc-400 hover:bg-zinc-700 transition-colors"
-        >
-          Cancel
-        </button>
-      </div>
-      {error && <p className="text-xs text-red-400">{error}</p>}
+    <form onSubmit={handleClaim}>
+      <VStack gap="sm">
+        <Input
+          type="text"
+          placeholder="Your wallet address (0x...)"
+          value={walletAddress}
+          onChange={(e) => setWalletAddress(e.target.value)}
+          inputSize="sm"
+          pattern="^0x[a-fA-F0-9]{40}$"
+          required
+        />
+        <HStack gap="sm">
+          <Button
+            type="submit"
+            variant="success"
+            size="sm"
+            isLoading={loading}
+          >
+            {loading ? "Claiming..." : "Confirm Claim"}
+          </Button>
+          <Button
+            type="button"
+            variant="secondary"
+            size="sm"
+            onClick={() => setShowForm(false)}
+          >
+            Cancel
+          </Button>
+        </HStack>
+        {error && (
+          <Text variant="caption" color="danger" as="p">
+            {error}
+          </Text>
+        )}
+      </VStack>
     </form>
   );
 }

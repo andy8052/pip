@@ -1,5 +1,7 @@
 "use client";
 
+import { Button, EmptyState } from "@/design-system";
+
 interface ErrorPageProps {
   error: Error & { digest?: string };
   reset: () => void;
@@ -7,17 +9,31 @@ interface ErrorPageProps {
 
 export default function ErrorPage({ error, reset }: ErrorPageProps) {
   return (
-    <div className="flex flex-col items-center justify-center py-20 space-y-4">
-      <h2 className="text-xl font-semibold text-white">Something went wrong</h2>
-      <p className="text-sm text-zinc-400 max-w-md text-center">
-        {error.message || "An unexpected error occurred."}
-      </p>
-      <button
-        onClick={reset}
-        className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-500 transition-colors"
-      >
-        Try again
-      </button>
-    </div>
+    <EmptyState
+      icon={
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="48"
+          height="48"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <circle cx="12" cy="12" r="10" />
+          <line x1="12" y1="8" x2="12" y2="12" />
+          <line x1="12" y1="16" x2="12.01" y2="16" />
+        </svg>
+      }
+      title="Something went wrong"
+      description={error.message || "An unexpected error occurred."}
+      action={
+        <Button variant="primary" onClick={reset}>
+          Try again
+        </Button>
+      }
+    />
   );
 }

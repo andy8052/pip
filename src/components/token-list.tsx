@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { TokenCard } from "./token-card";
+import { EmptyState, Spinner } from "@/design-system";
 import type { TokenLaunch } from "@/types";
 
 export function TokenList() {
@@ -18,20 +19,23 @@ export function TokenList() {
 
   if (loading) {
     return (
-      <div className="text-center text-zinc-500 py-8">Loading tokens...</div>
+      <div className="flex justify-center py-[var(--space-8)]">
+        <Spinner size="lg" label="Loading tokens" />
+      </div>
     );
   }
 
   if (tokens.length === 0) {
     return (
-      <div className="text-center text-zinc-500 py-8">
-        No tokens launched yet. Be the first!
-      </div>
+      <EmptyState
+        title="No tokens yet"
+        description="No tokens launched yet. Be the first!"
+      />
     );
   }
 
   return (
-    <div className="grid gap-4 sm:grid-cols-2">
+    <div className="grid gap-[var(--space-4)] sm:grid-cols-2">
       {tokens.map((token) => (
         <TokenCard key={token.id} launch={token} />
       ))}

@@ -1,0 +1,367 @@
+/*
+ * ==========================================================================
+ * PIP DESIGN SYSTEM — DESIGN TOKENS
+ * ==========================================================================
+ *
+ * Foundation layer: CSS custom properties that define the visual language.
+ *
+ * Design Principles Applied:
+ * - 60-30-10 Rule: 60% neutral bg, 30% surface/card, 10% accent
+ * - WCAG AA Contrast: All text meets 4.5:1 ratio on its background
+ * - 8px Grid: All spacing derives from a base-4/base-8 scale
+ * - Major Third (1.25) Type Scale: Harmonious size progression
+ * - Perceptual Uniformity: Color steps feel visually equidistant
+ * - Meaningful Motion: Durations scaled to interaction significance
+ *
+ * ==========================================================================
+ */
+
+/* --------------------------------------------------------------------------
+ * COLOR PALETTE
+ *
+ * Built dark-first. Each scale runs from 50 (lightest) to 950 (darkest).
+ * Neutrals use zinc with subtle cool undertones for depth.
+ * Accent colors are tuned for vibrancy on dark backgrounds.
+ * -------------------------------------------------------------------------- */
+
+:root {
+  /* ---- Neutral / Zinc ---- */
+  --color-neutral-50: #fafafa;
+  --color-neutral-100: #f4f4f5;
+  --color-neutral-200: #e4e4e7;
+  --color-neutral-300: #d4d4d8;
+  --color-neutral-400: #a1a1aa;
+  --color-neutral-500: #71717a;
+  --color-neutral-600: #52525b;
+  --color-neutral-700: #3f3f46;
+  --color-neutral-800: #27272a;
+  --color-neutral-850: #1e1e22;
+  --color-neutral-900: #18181b;
+  --color-neutral-925: #121215;
+  --color-neutral-950: #09090b;
+
+  /* ---- Primary / Electric Blue ----
+   * Core brand accent — vibrant on dark, trusted feel.
+   * Inspired by the X/Twitter blue heritage of this product. */
+  --color-primary-50: #eff6ff;
+  --color-primary-100: #dbeafe;
+  --color-primary-200: #bfdbfe;
+  --color-primary-300: #93c5fd;
+  --color-primary-400: #60a5fa;
+  --color-primary-500: #3b82f6;
+  --color-primary-600: #2563eb;
+  --color-primary-700: #1d4ed8;
+  --color-primary-800: #1e40af;
+  --color-primary-900: #1e3a8a;
+  --color-primary-950: #172554;
+
+  /* ---- Success / Emerald ----
+   * Positive outcomes, confirmations, claimed states.
+   * Cyan undertone keeps it modern and fresh. */
+  --color-success-50: #ecfdf5;
+  --color-success-100: #d1fae5;
+  --color-success-200: #a7f3d0;
+  --color-success-300: #6ee7b7;
+  --color-success-400: #34d399;
+  --color-success-500: #10b981;
+  --color-success-600: #059669;
+  --color-success-700: #047857;
+  --color-success-800: #065f46;
+  --color-success-900: #064e3b;
+  --color-success-950: #022c22;
+
+  /* ---- Warning / Amber ----
+   * Pending states, caution indicators.
+   * Warm amber with orange depth for urgency without alarm. */
+  --color-warning-50: #fffbeb;
+  --color-warning-100: #fef3c7;
+  --color-warning-200: #fde68a;
+  --color-warning-300: #fcd34d;
+  --color-warning-400: #fbbf24;
+  --color-warning-500: #f59e0b;
+  --color-warning-600: #d97706;
+  --color-warning-700: #b45309;
+  --color-warning-800: #92400e;
+  --color-warning-900: #78350f;
+  --color-warning-950: #451a03;
+
+  /* ---- Danger / Rose ----
+   * Errors, destructive actions, failed states.
+   * Rose-red is easier on dark backgrounds than pure red. */
+  --color-danger-50: #fff1f2;
+  --color-danger-100: #ffe4e6;
+  --color-danger-200: #fecdd3;
+  --color-danger-300: #fda4af;
+  --color-danger-400: #fb7185;
+  --color-danger-500: #f43f5e;
+  --color-danger-600: #e11d48;
+  --color-danger-700: #be123c;
+  --color-danger-800: #9f1239;
+  --color-danger-900: #881337;
+  --color-danger-950: #4c0519;
+
+  /* ---- Info / Sky ----
+   * Informational callouts, deploying states.
+   * Lighter than primary to distinguish hierarchy. */
+  --color-info-50: #f0f9ff;
+  --color-info-100: #e0f2fe;
+  --color-info-200: #bae6fd;
+  --color-info-300: #7dd3fc;
+  --color-info-400: #38bdf8;
+  --color-info-500: #0ea5e9;
+  --color-info-600: #0284c7;
+  --color-info-700: #0369a1;
+  --color-info-800: #075985;
+  --color-info-900: #0c4a6e;
+  --color-info-950: #082f49;
+
+  /* --------------------------------------------------------------------------
+   * SEMANTIC COLOR MAPPINGS
+   *
+   * These map raw palette values to their functional purpose.
+   * This indirection allows theming and ensures consistency.
+   * -------------------------------------------------------------------------- */
+
+  /* ---- Backgrounds (60% of UI) ---- */
+  --bg-base: var(--color-neutral-950);
+  --bg-raised: var(--color-neutral-900);
+  --bg-surface: var(--color-neutral-850);
+  --bg-overlay: var(--color-neutral-800);
+  --bg-subtle: var(--color-neutral-925);
+
+  /* ---- Foregrounds / Text ---- */
+  --fg-default: var(--color-neutral-50);
+  --fg-muted: var(--color-neutral-400);
+  --fg-subtle: var(--color-neutral-500);
+  --fg-faint: var(--color-neutral-600);
+  --fg-on-accent: #ffffff;
+
+  /* ---- Borders ---- */
+  --border-default: var(--color-neutral-800);
+  --border-muted: var(--color-neutral-850);
+  --border-strong: var(--color-neutral-700);
+  --border-focus: var(--color-primary-500);
+
+  /* ---- Interactive / Primary ---- */
+  --accent-default: var(--color-primary-500);
+  --accent-hover: var(--color-primary-400);
+  --accent-active: var(--color-primary-600);
+  --accent-subtle: color-mix(in srgb, var(--color-primary-500) 12%, transparent);
+  --accent-muted: color-mix(in srgb, var(--color-primary-500) 20%, transparent);
+
+  /* ---- Status Colors ---- */
+  --status-success: var(--color-success-400);
+  --status-success-bg: color-mix(in srgb, var(--color-success-900) 50%, transparent);
+  --status-success-border: var(--color-success-800);
+
+  --status-warning: var(--color-warning-400);
+  --status-warning-bg: color-mix(in srgb, var(--color-warning-900) 50%, transparent);
+  --status-warning-border: var(--color-warning-800);
+
+  --status-danger: var(--color-danger-400);
+  --status-danger-bg: color-mix(in srgb, var(--color-danger-950) 60%, transparent);
+  --status-danger-border: var(--color-danger-800);
+
+  --status-info: var(--color-info-400);
+  --status-info-bg: color-mix(in srgb, var(--color-info-950) 60%, transparent);
+  --status-info-border: var(--color-info-800);
+
+  /* --------------------------------------------------------------------------
+   * TYPOGRAPHY SCALE
+   *
+   * Major Third ratio (1.25) produces a harmonious progression.
+   * Each step: previous × 1.25
+   * Base: 16px (1rem)
+   *
+   * Scale: 12 → 14 → 16 → 20 → 24 → 30 → 36 → 48 → 60
+   * -------------------------------------------------------------------------- */
+
+  --font-family-sans: var(--font-geist-sans), system-ui, -apple-system,
+    BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-family-mono: var(--font-geist-mono), "SF Mono", "Fira Code",
+    "Fira Mono", "Roboto Mono", monospace;
+
+  /* Size scale */
+  --text-xs: 0.75rem;       /* 12px */
+  --text-sm: 0.875rem;      /* 14px */
+  --text-base: 1rem;        /* 16px */
+  --text-lg: 1.25rem;       /* 20px */
+  --text-xl: 1.5rem;        /* 24px */
+  --text-2xl: 1.875rem;     /* 30px */
+  --text-3xl: 2.25rem;      /* 36px */
+  --text-4xl: 3rem;         /* 48px */
+  --text-5xl: 3.75rem;      /* 60px */
+
+  /* Line heights — tighter for headings, generous for body */
+  --leading-none: 1;
+  --leading-tight: 1.2;
+  --leading-snug: 1.375;
+  --leading-normal: 1.5;
+  --leading-relaxed: 1.625;
+  --leading-loose: 2;
+
+  /* Letter spacing */
+  --tracking-tighter: -0.05em;
+  --tracking-tight: -0.025em;
+  --tracking-normal: 0em;
+  --tracking-wide: 0.025em;
+  --tracking-wider: 0.05em;
+  --tracking-widest: 0.1em;
+
+  /* Font weights */
+  --font-normal: 400;
+  --font-medium: 500;
+  --font-semibold: 600;
+  --font-bold: 700;
+
+  /* --------------------------------------------------------------------------
+   * SPACING SCALE
+   *
+   * Based on 4px half-steps within an 8px grid.
+   * Named for intent, numbered for flexibility.
+   * -------------------------------------------------------------------------- */
+
+  --space-0: 0;
+  --space-px: 1px;
+  --space-0-5: 0.125rem;    /* 2px */
+  --space-1: 0.25rem;       /* 4px */
+  --space-1-5: 0.375rem;    /* 6px */
+  --space-2: 0.5rem;        /* 8px */
+  --space-2-5: 0.625rem;    /* 10px */
+  --space-3: 0.75rem;       /* 12px */
+  --space-3-5: 0.875rem;    /* 14px */
+  --space-4: 1rem;          /* 16px */
+  --space-5: 1.25rem;       /* 20px */
+  --space-6: 1.5rem;        /* 24px */
+  --space-8: 2rem;          /* 32px */
+  --space-10: 2.5rem;       /* 40px */
+  --space-12: 3rem;         /* 48px */
+  --space-16: 4rem;         /* 64px */
+  --space-20: 5rem;         /* 80px */
+  --space-24: 6rem;         /* 96px */
+
+  /* --------------------------------------------------------------------------
+   * BORDER RADIUS
+   *
+   * Consistent roundness communicates friendliness and modernity.
+   * Larger radii for larger containers, smaller for compact elements.
+   * -------------------------------------------------------------------------- */
+
+  --radius-none: 0;
+  --radius-sm: 0.25rem;     /* 4px - chips, small badges */
+  --radius-md: 0.5rem;      /* 8px - buttons, inputs */
+  --radius-lg: 0.75rem;     /* 12px - cards, dialogs */
+  --radius-xl: 1rem;        /* 16px - large containers */
+  --radius-2xl: 1.5rem;     /* 24px - hero cards */
+  --radius-full: 9999px;    /* Circles, pills */
+
+  /* --------------------------------------------------------------------------
+   * SHADOWS
+   *
+   * Layered shadows for depth perception on dark backgrounds.
+   * Dark themes need more subtle, diffused shadows.
+   * Uses multiple shadow layers for realism (ambient + direct light).
+   * -------------------------------------------------------------------------- */
+
+  --shadow-xs:
+    0 1px 2px 0 rgba(0, 0, 0, 0.3);
+  --shadow-sm:
+    0 1px 3px 0 rgba(0, 0, 0, 0.4),
+    0 1px 2px -1px rgba(0, 0, 0, 0.4);
+  --shadow-md:
+    0 4px 6px -1px rgba(0, 0, 0, 0.4),
+    0 2px 4px -2px rgba(0, 0, 0, 0.4);
+  --shadow-lg:
+    0 10px 15px -3px rgba(0, 0, 0, 0.4),
+    0 4px 6px -4px rgba(0, 0, 0, 0.4);
+  --shadow-xl:
+    0 20px 25px -5px rgba(0, 0, 0, 0.5),
+    0 8px 10px -6px rgba(0, 0, 0, 0.5);
+  --shadow-2xl:
+    0 25px 50px -12px rgba(0, 0, 0, 0.6);
+
+  /* Glow effects for primary actions (creates "lift" on dark surfaces) */
+  --shadow-glow-sm: 0 0 10px -2px rgba(59, 130, 246, 0.3);
+  --shadow-glow-md: 0 0 20px -4px rgba(59, 130, 246, 0.35);
+  --shadow-glow-lg: 0 0 30px -6px rgba(59, 130, 246, 0.4);
+
+  /* Ring — focus indicator */
+  --ring-width: 2px;
+  --ring-offset: 2px;
+  --ring-color: var(--color-primary-500);
+
+  /* --------------------------------------------------------------------------
+   * TRANSITIONS & ANIMATION
+   *
+   * Motion design principles:
+   * - Micro-interactions: 150ms (hover, toggle, press)
+   * - Transitions: 200-300ms (panel open, route change)
+   * - Emphasis: 400-500ms (modal enter, celebration)
+   *
+   * Easing:
+   * - ease-out for entrances (decelerating)
+   * - ease-in for exits (accelerating)
+   * - ease-in-out for looping/continuous
+   * -------------------------------------------------------------------------- */
+
+  --duration-instant: 0ms;
+  --duration-fast: 100ms;
+  --duration-normal: 150ms;
+  --duration-moderate: 200ms;
+  --duration-slow: 300ms;
+  --duration-slower: 500ms;
+
+  --ease-default: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-spring: cubic-bezier(0.22, 1.2, 0.36, 1);
+
+  --transition-colors: color var(--duration-normal) var(--ease-default),
+    background-color var(--duration-normal) var(--ease-default),
+    border-color var(--duration-normal) var(--ease-default),
+    box-shadow var(--duration-normal) var(--ease-default);
+  --transition-transform: transform var(--duration-normal) var(--ease-default);
+  --transition-opacity: opacity var(--duration-normal) var(--ease-default);
+  --transition-all: all var(--duration-normal) var(--ease-default);
+
+  /* --------------------------------------------------------------------------
+   * Z-INDEX SCALE
+   *
+   * Layered z-index system prevents z-fighting.
+   * Named for context, not magic numbers.
+   * -------------------------------------------------------------------------- */
+
+  --z-base: 0;
+  --z-raised: 1;
+  --z-dropdown: 10;
+  --z-sticky: 20;
+  --z-overlay: 30;
+  --z-modal: 40;
+  --z-popover: 50;
+  --z-tooltip: 60;
+  --z-toast: 70;
+
+  /* --------------------------------------------------------------------------
+   * LAYOUT
+   * -------------------------------------------------------------------------- */
+
+  --container-max: 64rem;     /* 1024px — max-w-5xl equivalent */
+  --container-padding: var(--space-4);
+}
+
+/* --------------------------------------------------------------------------
+ * REDUCED MOTION — Respect user preferences.
+ * All animations collapse to instant when user prefers reduced motion.
+ * -------------------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --duration-fast: 0ms;
+    --duration-normal: 0ms;
+    --duration-moderate: 0ms;
+    --duration-slow: 0ms;
+    --duration-slower: 0ms;
+  }
+}

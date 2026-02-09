@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/components/providers";
 import { Header } from "@/components/header";
+import { Container } from "@/design-system";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -50,7 +51,11 @@ export default function RootLayout({
       >
         <Providers>
           <Header />
-          <main className="mx-auto max-w-5xl px-4 py-8">{children}</main>
+          <main>
+            <Container className="py-[var(--space-8)]">
+              {children}
+            </Container>
+          </main>
         </Providers>
       </body>
     </html>

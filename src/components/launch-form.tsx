@@ -2,7 +2,16 @@
 
 import { useState, useRef } from "react";
 import { usePrivy } from "@privy-io/react-auth";
-import Image from "next/image";
+import {
+  Button,
+  Input,
+  FileUpload,
+  Alert,
+  AlertTitle,
+  AlertDescription,
+  VStack,
+  Text,
+} from "@/design-system";
 
 interface LaunchResult {
   tokenAddress?: string;
@@ -23,8 +32,7 @@ export function LaunchForm() {
   const [result, setResult] = useState<LaunchResult | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0] ?? null;
+  function handleFileSelect(file: File | null) {
     if (!file) {
       setImageFile(null);
       setImagePreview(null);
@@ -135,200 +143,114 @@ export function LaunchForm() {
 
   return (
     <div className="w-full max-w-md">
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label
-            htmlFor="targetHandle"
-            className="block text-sm font-medium text-zinc-400 mb-1"
-          >
-            X Profile Handle
-          </label>
-          <input
+      <form onSubmit={handleSubmit}>
+        <VStack gap="md">
+          <Input
+            label="X Profile Handle"
             id="targetHandle"
             type="text"
             placeholder="@elonmusk"
             value={targetHandle}
             onChange={(e) => setTargetHandle(e.target.value)}
-            className="w-full rounded-lg border border-zinc-700 bg-zinc-900 px-3 py-2 text-white placeholder-zinc-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
             required
           />
-        </div>
-        <div>
-          <label
-            htmlFor="tokenName"
-            className="block text-sm font-medium text-zinc-400 mb-1"
-          >
-            Token Name
-          </label>
-          <input
+
+          <Input
+            label="Token Name"
             id="tokenName"
             type="text"
             placeholder="Elon Coin"
             value={tokenName}
             onChange={(e) => setTokenName(e.target.value)}
-            className="w-full rounded-lg border border-zinc-700 bg-zinc-900 px-3 py-2 text-white placeholder-zinc-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
             required
             maxLength={128}
           />
-        </div>
-        <div>
-          <label
-            htmlFor="tokenSymbol"
-            className="block text-sm font-medium text-zinc-400 mb-1"
-          >
-            Token Symbol
-          </label>
-          <input
+
+          <Input
+            label="Token Symbol"
             id="tokenSymbol"
             type="text"
             placeholder="ELON"
             value={tokenSymbol}
             onChange={(e) => setTokenSymbol(e.target.value)}
-            className="w-full rounded-lg border border-zinc-700 bg-zinc-900 px-3 py-2 text-white placeholder-zinc-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
             required
             maxLength={16}
           />
-        </div>
-        <div>
-          <label
-            htmlFor="tokenImage"
-            className="block text-sm font-medium text-zinc-400 mb-1"
-          >
-            Token Image
-          </label>
-          {imagePreview ? (
-            <div className="flex items-center gap-3 rounded-lg border border-zinc-700 bg-zinc-900 p-3">
-              <Image
-                src={imagePreview}
-                alt="Token image preview"
-                width={48}
-                height={48}
-                className="h-12 w-12 rounded-lg object-cover"
-                unoptimized
-              />
-              <div className="flex-1 min-w-0">
-                <p className="text-sm text-white truncate">
-                  {imageFile?.name}
-                </p>
-                <p className="text-xs text-zinc-500">
-                  {imageFile
-                    ? `${(imageFile.size / 1024).toFixed(1)} KB`
-                    : ""}
-                </p>
-              </div>
-              <button
-                type="button"
-                onClick={clearImage}
-                className="rounded-md p-1 text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors"
-                aria-label="Remove image"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <line x1="18" y1="6" x2="6" y2="18" />
-                  <line x1="6" y1="6" x2="18" y2="18" />
-                </svg>
-              </button>
-            </div>
-          ) : (
-            <button
-              type="button"
-              onClick={() => fileInputRef.current?.click()}
-              className="w-full rounded-lg border border-dashed border-zinc-700 bg-zinc-900 px-3 py-6 text-zinc-500 hover:border-zinc-500 hover:text-zinc-400 transition-colors flex flex-col items-center gap-2"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                <polyline points="17 8 12 3 7 8" />
-                <line x1="12" y1="3" x2="12" y2="15" />
-              </svg>
-              <span className="text-sm">
-                Click to upload image
-              </span>
-              <span className="text-xs">
-                PNG, JPEG, WebP, or GIF (max 4 MB)
-              </span>
-            </button>
-          )}
-          <input
+
+          <FileUpload
             ref={fileInputRef}
-            id="tokenImage"
-            type="file"
+            label="Token Image"
+            hint="PNG, JPEG, WebP, or GIF (max 4 MB)"
             accept="image/png,image/jpeg,image/webp,image/gif"
-            onChange={handleFileChange}
-            className="hidden"
+            onFileSelect={handleFileSelect}
+            preview={imagePreview}
+            fileName={imageFile?.name}
+            fileSize={
+              imageFile ? `${(imageFile.size / 1024).toFixed(1)} KB` : undefined
+            }
+            onClear={clearImage}
           />
-        </div>
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full rounded-lg bg-blue-600 px-4 py-2.5 font-medium text-white hover:bg-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-        >
-          {loading
-            ? "Deploying..."
-            : authenticated
-              ? "Launch Token"
-              : "Sign in to Launch"}
-        </button>
+
+          <Button
+            type="submit"
+            variant="primary"
+            size="lg"
+            fullWidth
+            isLoading={loading}
+          >
+            {loading
+              ? "Deploying..."
+              : authenticated
+                ? "Launch Token"
+                : "Sign in to Launch"}
+          </Button>
+        </VStack>
       </form>
 
       {error && (
-        <div className="mt-4 rounded-lg border border-red-800 bg-red-950/50 p-3 text-sm text-red-400">
-          {error}
-        </div>
+        <Alert variant="danger" className="mt-[var(--space-4)]">
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
       )}
 
       {result && (
-        <div className="mt-4 rounded-lg border border-green-800 bg-green-950/50 p-4 space-y-2">
-          <p className="font-medium text-green-400">Token launched!</p>
-          <p className="text-sm text-zinc-400">
-            <span className="text-zinc-500">Name:</span> {result.tokenName} ($
-            {result.tokenSymbol})
-          </p>
-          {result.tokenAddress && (
-            <p className="text-sm text-zinc-400 break-all">
-              <span className="text-zinc-500">Address:</span>{" "}
-              <a
-                href={`https://basescan.org/address/${result.tokenAddress}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-400 hover:underline"
-              >
-                {result.tokenAddress}
-              </a>
-            </p>
-          )}
-          {result.deployTxHash && (
-            <p className="text-sm text-zinc-400 break-all">
-              <span className="text-zinc-500">Tx:</span>{" "}
-              <a
-                href={`https://basescan.org/tx/${result.deployTxHash}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-400 hover:underline"
-              >
-                {result.deployTxHash}
-              </a>
-            </p>
-          )}
-        </div>
+        <Alert variant="success" className="mt-[var(--space-4)]">
+          <AlertTitle>Token launched!</AlertTitle>
+          <AlertDescription>
+            <VStack gap="xs">
+              <Text variant="body-sm" as="p">
+                <Text variant="caption" as="span">Name:</Text>{" "}
+                {result.tokenName} (${result.tokenSymbol})
+              </Text>
+              {result.tokenAddress && (
+                <Text variant="body-sm" as="p" className="break-all">
+                  <Text variant="caption" as="span">Address:</Text>{" "}
+                  <a
+                    href={`https://basescan.org/address/${result.tokenAddress}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[var(--accent-default)] hover:underline underline-offset-4"
+                  >
+                    {result.tokenAddress}
+                  </a>
+                </Text>
+              )}
+              {result.deployTxHash && (
+                <Text variant="body-sm" as="p" className="break-all">
+                  <Text variant="caption" as="span">Tx:</Text>{" "}
+                  <a
+                    href={`https://basescan.org/tx/${result.deployTxHash}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[var(--accent-default)] hover:underline underline-offset-4"
+                  >
+                    {result.deployTxHash}
+                  </a>
+                </Text>
+              )}
+            </VStack>
+          </AlertDescription>
+        </Alert>
       )}
     </div>
   );

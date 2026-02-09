@@ -2,52 +2,54 @@
 
 import { usePrivy } from "@privy-io/react-auth";
 import Link from "next/link";
+import {
+  Button,
+  Logo,
+  HStack,
+  Container,
+  Text,
+  AppLink,
+} from "@/design-system";
 
 export function Header() {
   const { login, logout, authenticated, user } = usePrivy();
   const twitterUsername = user?.twitter?.username;
 
   return (
-    <header className="border-b border-zinc-800 bg-zinc-950">
-      <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3">
-        <div className="flex items-center gap-6">
-          <Link href="/" className="text-xl font-bold text-white">
-            pip
-          </Link>
-          {authenticated && (
-            <Link
-              href="/dashboard"
-              className="text-sm text-zinc-400 hover:text-white transition-colors"
-            >
-              Dashboard
+    <header className="bg-[var(--bg-subtle)] border-b border-[var(--border-default)]">
+      <Container>
+        <HStack align="center" justify="between" className="py-[var(--space-3)]">
+          <HStack align="center" gap="lg">
+            <Link href="/" className="no-underline">
+              <Logo size="md" />
             </Link>
-          )}
-        </div>
-        <div className="flex items-center gap-3">
-          {authenticated ? (
-            <>
-              {twitterUsername && (
-                <span className="text-sm text-zinc-400">
-                  @{twitterUsername}
-                </span>
-              )}
-              <button
-                onClick={logout}
-                className="rounded-lg bg-zinc-800 px-3 py-1.5 text-sm text-zinc-300 hover:bg-zinc-700 transition-colors"
-              >
-                Sign out
-              </button>
-            </>
-          ) : (
-            <button
-              onClick={login}
-              className="rounded-lg bg-blue-600 px-4 py-1.5 text-sm font-medium text-white hover:bg-blue-500 transition-colors"
-            >
-              Sign in with X
-            </button>
-          )}
-        </div>
-      </div>
+            {authenticated && (
+              <AppLink href="/dashboard" variant="nav">
+                Dashboard
+              </AppLink>
+            )}
+          </HStack>
+
+          <HStack align="center" gap="sm">
+            {authenticated ? (
+              <>
+                {twitterUsername && (
+                  <Text variant="body-sm" color="muted" as="span">
+                    @{twitterUsername}
+                  </Text>
+                )}
+                <Button variant="secondary" size="sm" onClick={logout}>
+                  Sign out
+                </Button>
+              </>
+            ) : (
+              <Button variant="primary" size="sm" onClick={login}>
+                Sign in with X
+              </Button>
+            )}
+          </HStack>
+        </HStack>
+      </Container>
     </header>
   );
 }
