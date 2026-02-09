@@ -202,7 +202,7 @@ const STEPS = [
     number: "03",
     title: "Launch & earn",
     description:
-      "Deploy on Base via Clanker v4. The profile owner can claim 80% of trading fees plus vesting tokens at any time.",
+      "Deploy on Base via Clanker v4. 10% of the token supply is reserved for the X account and vested. The profile owner also claims 80% of trading fees.",
     icon: IconCoins,
   },
 ] as const;
@@ -219,6 +219,12 @@ const FEATURES = [
     title: "80% fee sharing",
     description:
       "Profile owners claim the majority of trading fees. Fair economics that reward the people tokens are created for.",
+  },
+  {
+    icon: IconCoins,
+    title: "10% token vesting",
+    description:
+      "10% of every token's supply is reserved for the X account and vested over time — aligning long-term incentives for creators.",
   },
   {
     icon: IconShield,
@@ -276,9 +282,9 @@ export default function LandingPage() {
                 align="center"
                 className="max-w-xl text-[var(--text-lg)] leading-[var(--leading-relaxed)]"
               >
-                Create a token for anyone on X in seconds. The profile owner
-                claims 80% of trading fees and vesting tokens — no sign-up
-                required.
+                Create a token for anyone on X in seconds. 10% of the token
+                supply is reserved for the X account and vested — plus they
+                claim 80% of trading fees. No sign-up required.
               </Text>
             </VStack>
 
@@ -340,7 +346,7 @@ export default function LandingPage() {
 
                     <Separator />
 
-                    <div className="grid grid-cols-3 gap-[var(--space-4)]">
+                    <div className="grid grid-cols-4 gap-[var(--space-4)]">
                       <VStack gap="none" align="center">
                         <Text variant="caption" color="subtle">
                           For
@@ -361,6 +367,17 @@ export default function LandingPage() {
                           className="font-[var(--font-medium)] text-[var(--status-success)]"
                         >
                           80%
+                        </Text>
+                      </VStack>
+                      <VStack gap="none" align="center">
+                        <Text variant="caption" color="subtle">
+                          Vested
+                        </Text>
+                        <Text
+                          variant="body-sm"
+                          className="font-[var(--font-medium)] text-[var(--accent-default)]"
+                        >
+                          10%
                         </Text>
                       </VStack>
                       <VStack gap="none" align="center">
@@ -501,9 +518,9 @@ export default function LandingPage() {
           <div className="grid grid-cols-2 gap-[var(--space-8)] sm:grid-cols-4">
             {[
               { value: "80%", label: "Fee share for creators" },
+              { value: "10%", label: "Token supply vested" },
               { value: "1-click", label: "Token deployment" },
               { value: "Base L2", label: "Fast & low cost" },
-              { value: "v4", label: "Latest Clanker protocol" },
             ].map((stat) => (
               <VStack key={stat.label} align="center" gap="xs">
                 <Text
