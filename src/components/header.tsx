@@ -23,11 +23,18 @@ export function Header() {
             <Link href="/" className="no-underline">
               <Logo size="md" />
             </Link>
-            {authenticated && (
-              <AppLink href="/dashboard" variant="nav">
-                Dashboard
-              </AppLink>
-            )}
+            <nav>
+              <HStack align="center" gap="xs" className="sm:gap-[var(--space-4)]">
+                <AppLink href="/launch" variant="nav">
+                  Launch
+                </AppLink>
+                {authenticated && (
+                  <AppLink href="/dashboard" variant="nav">
+                    Dashboard
+                  </AppLink>
+                )}
+              </HStack>
+            </nav>
           </HStack>
 
           <HStack align="center" gap="sm">

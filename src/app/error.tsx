@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, EmptyState } from "@/design-system";
+import { Button, EmptyState, Container } from "@/design-system";
 
 interface ErrorPageProps {
   error: Error & { digest?: string };
@@ -9,6 +9,7 @@ interface ErrorPageProps {
 
 export default function ErrorPage({ error, reset }: ErrorPageProps) {
   return (
+    <Container className="py-[var(--space-8)]">
     <EmptyState
       icon={
         <svg
@@ -35,5 +36,6 @@ export default function ErrorPage({ error, reset }: ErrorPageProps) {
         </Button>
       }
     />
+    </Container>
   );
 }
