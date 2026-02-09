@@ -1,13 +1,13 @@
-import { Button, EmptyState } from "@/design-system";
+import { Button, EmptyState, Text } from "@/design-system";
 import Link from "next/link";
 
 export default function NotFound() {
   return (
     <EmptyState
       icon={
-        <span className="text-[var(--text-5xl)] font-[var(--font-bold)] text-[var(--fg-default)]">
+        <Text variant="display" as="span">
           404
-        </span>
+        </Text>
       }
       description="The page you are looking for does not exist."
       action={

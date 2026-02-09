@@ -87,10 +87,11 @@ const Dialog = forwardRef<HTMLDialogElement, DialogProps>(
       >
         <div
           className={cn(
-            "relative w-full max-w-lg mx-[var(--space-4)]",
+            "relative w-full max-w-lg mx-[var(--space-3)] sm:mx-[var(--space-4)]",
             "rounded-[var(--radius-xl)] border border-[var(--border-default)]",
             "bg-[var(--bg-raised)] shadow-[var(--shadow-2xl)]",
-            "p-[var(--space-6)]",
+            "p-[var(--space-4)] sm:p-[var(--space-6)]",
+            "max-h-[calc(100dvh-var(--space-8))] overflow-y-auto",
           )}
         >
           {children}
@@ -147,7 +148,7 @@ const DialogFooter = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(
     <div
       ref={ref}
       className={cn(
-        "flex items-center justify-end gap-[var(--space-2)] mt-[var(--space-6)]",
+        "flex flex-col-reverse sm:flex-row sm:items-center sm:justify-end gap-[var(--space-2)] mt-[var(--space-4)] sm:mt-[var(--space-6)]",
         className
       )}
       {...props}

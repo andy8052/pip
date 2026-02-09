@@ -35,7 +35,7 @@ export function TokenList() {
   }
 
   return (
-    <div className="grid gap-[var(--space-4)] sm:grid-cols-2">
+    <div className="grid gap-[var(--space-3)] sm:gap-[var(--space-4)] sm:grid-cols-2 lg:grid-cols-3">
       {tokens.map((token) => (
         <TokenCard key={token.id} launch={token} />
       ))}

@@ -81,7 +81,7 @@ export function DashboardTokens() {
       {unclaimedTokens.length > 0 && (
         <VStack gap="md">
           <Text variant="h3">Tokens Available to Claim</Text>
-          <div className="grid gap-[var(--space-4)] sm:grid-cols-2">
+          <div className="grid gap-[var(--space-3)] sm:gap-[var(--space-4)] sm:grid-cols-2 lg:grid-cols-3">
             {unclaimedTokens.map((token) => (
               <VStack key={token.id} gap="sm">
                 <TokenCard launch={token} />
@@ -95,7 +95,7 @@ export function DashboardTokens() {
       {claimedTokens.length > 0 && (
         <VStack gap="md">
           <Text variant="h3">Claimed Tokens</Text>
-          <div className="grid gap-[var(--space-4)] sm:grid-cols-2">
+          <div className="grid gap-[var(--space-3)] sm:gap-[var(--space-4)] sm:grid-cols-2 lg:grid-cols-3">
             {claimedTokens.map((token) => (
               <VStack key={token.id} gap="sm">
                 <TokenCard launch={token} />

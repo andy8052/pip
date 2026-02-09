@@ -39,6 +39,13 @@ export const metadata: Metadata = {
   },
 };
 
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  viewportFit: "cover" as const,
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -52,7 +59,7 @@ export default function RootLayout({
         <Providers>
           <Header />
           <main>
-            <Container className="py-[var(--space-8)]">
+            <Container className="py-[var(--space-4)] sm:py-[var(--space-6)] lg:py-[var(--space-8)]">
               {children}
             </Container>
           </main>

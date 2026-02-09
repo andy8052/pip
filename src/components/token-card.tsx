@@ -27,31 +27,34 @@ export function TokenCard({ launch }: { launch: TokenLaunch }) {
   return (
     <Card variant="default" padding="md">
       <VStack gap="sm">
-        <HStack align="start" justify="between">
-          <HStack align="center" gap="sm">
-            {launch.tokenImageUrl ? (
-              <Image
-                src={launch.tokenImageUrl}
-                alt={launch.tokenName}
-                width={40}
-                height={40}
-                className="size-10 rounded-full object-cover"
-                unoptimized
-              />
-            ) : (
-              <Avatar
-                size="md"
-                fallback={launch.tokenSymbol}
-              />
-            )}
-            <VStack gap="none">
-              <Text variant="body" as="p" className="font-[var(--font-medium)]">
+        {/* Token identity row */}
+        <HStack align="start" justify="between" className="gap-[var(--space-2)]">
+          <HStack align="center" gap="sm" className="min-w-0 flex-1">
+            <div className="shrink-0">
+              {launch.tokenImageUrl ? (
+                <Image
+                  src={launch.tokenImageUrl}
+                  alt={launch.tokenName}
+                  width={40}
+                  height={40}
+                  className="size-10 rounded-full object-cover"
+                  unoptimized
+                />
+              ) : (
+                <Avatar
+                  size="md"
+                  fallback={launch.tokenSymbol}
+                />
+              )}
+            </div>
+            <VStack gap="none" className="min-w-0">
+              <Text variant="body" as="p" truncate className="font-[var(--font-medium)]">
                 {launch.tokenName}{" "}
                 <Text variant="body-sm" color="subtle" as="span">
                   ${launch.tokenSymbol}
                 </Text>
               </Text>
-              <Text variant="body-sm" as="p">
+              <Text variant="body-sm" as="p" truncate>
                 for{" "}
                 <a
                   href={`https://x.com/${launch.targetTwitterUsername}`}
@@ -64,11 +67,14 @@ export function TokenCard({ launch }: { launch: TokenLaunch }) {
               </Text>
             </VStack>
           </HStack>
-          <StatusBadge status={launch.status} />
+          <div className="shrink-0">
+            <StatusBadge status={launch.status} />
+          </div>
         </HStack>
 
+        {/* Contract address — truncated on mobile, full on desktop */}
         {launch.tokenAddress && (
-          <Text variant="caption" as="p" className="break-all">
+          <Text variant="caption" as="p" className="break-all sm:break-normal sm:truncate">
             <a
               href={`https://basescan.org/address/${launch.tokenAddress}`}
               target="_blank"
@@ -80,7 +86,8 @@ export function TokenCard({ launch }: { launch: TokenLaunch }) {
           </Text>
         )}
 
-        <HStack align="center" gap="sm">
+        {/* Metadata row */}
+        <HStack align="center" gap="sm" wrap>
           {launch.claimed ? (
             <Text variant="caption" color="success" as="span">
               Claimed

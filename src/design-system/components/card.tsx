@@ -32,9 +32,9 @@ const cardVariants = cva(
       },
       padding: {
         none: "",
-        sm: "p-[var(--space-3)]",
-        md: "p-[var(--space-4)]",
-        lg: "p-[var(--space-6)]",
+        sm: "p-[var(--space-2)] sm:p-[var(--space-3)]",
+        md: "p-[var(--space-3)] sm:p-[var(--space-4)]",
+        lg: "p-[var(--space-4)] sm:p-[var(--space-6)]",
       },
     },
     defaultVariants: {

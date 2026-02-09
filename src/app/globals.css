@@ -57,6 +57,13 @@ body {
   font-family: var(--font-family-sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  /* Prevent horizontal overflow on mobile */
+  overflow-x: hidden;
+}
+
+/* Main content area fills available viewport height */
+main {
+  min-height: calc(100dvh - 48px); /* viewport minus header */
 }
 
 /* Scrollbar styling for dark theme (Webkit browsers) */
@@ -98,6 +105,8 @@ body {
 /* Smooth scrolling with reduced-motion respect */
 html {
   scroll-behavior: smooth;
+  /* Use safe area insets for notched devices (iPhone X+) */
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
 }
 
 @media (prefers-reduced-motion: reduce) {

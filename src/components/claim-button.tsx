@@ -25,9 +25,9 @@ export function ClaimButton({ launch, onClaimed }: ClaimButtonProps) {
 
   if (launch.claimed) {
     return (
-      <Text variant="body-sm" color="success" as="div">
+      <Text variant="body-sm" color="success" as="div" className="overflow-hidden">
         Claimed to{" "}
-        <Text variant="code" as="span" className="break-all">
+        <Text variant="code" as="span" className="break-all text-[var(--text-xs)]">
           {launch.claimerWalletAddress}
         </Text>
       </Text>

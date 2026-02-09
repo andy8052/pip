@@ -31,7 +31,7 @@ function EmptyState({
     <div
       className={cn(
         "flex flex-col items-center justify-center",
-        "py-[var(--space-12)] px-[var(--space-4)]",
+        "py-[var(--space-8)] sm:py-[var(--space-12)] px-[var(--space-4)]",
         "text-center",
         className
       )}
