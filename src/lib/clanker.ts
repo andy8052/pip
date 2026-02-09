@@ -1,4 +1,5 @@
 import { Clanker } from "clanker-sdk/v4";
+import type { ClankerTokenV4 } from "clanker-sdk";
 import {
   getAdminWalletClient,
   getPublicClient,
@@ -7,16 +8,12 @@ import {
 } from "./admin-wallet";
 import { CONTRACTS, CLANKER_VAULT_ABI } from "./contracts";
 
-// Extract the token config type from the deploy method signature
-type ClankerTokenV4 = Parameters<InstanceType<typeof Clanker>["deploy"]>[0];
-
 function getClanker() {
+  // Type assertion needed: project viem version may differ from SDK's bundled viem types
   return new Clanker({
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    wallet: getAdminWalletClient() as any,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    publicClient: getPublicClient() as any,
-  });
+    wallet: getAdminWalletClient(),
+    publicClient: getPublicClient(),
+  } as NonNullable<ConstructorParameters<typeof Clanker>[0]>);
 }
 
 export interface DeployTokenParams {
@@ -74,27 +71,23 @@ export async function deployToken(params: DeployTokenParams) {
   const clanker = getClanker();
   const result = await clanker.deploy(tokenConfig);
 
-  if ("error" in result && result.error) {
-    const err = result.error as { data?: { label?: string }; error?: { message?: string } };
-    throw new Error(`Clanker deploy failed: ${err.data?.label ?? err.error?.message ?? "Unknown error"}`);
+  if (result.error) {
+    throw new Error(
+      `Clanker deploy failed: ${result.error.data.label ?? result.error.message ?? "Unknown error"}`
+    );
   }
 
-  const { txHash, waitForTransaction } = result as {
-    txHash: `0x${string}`;
-    waitForTransaction: () => Promise<
-      { address: `0x${string}`; error?: undefined } | { address?: undefined; error: unknown }
-    >;
-  };
+  const txResult = await result.waitForTransaction();
 
-  const txResult = await waitForTransaction();
-
-  if ("error" in txResult && txResult.error) {
-    throw new Error(`Deploy tx failed`);
+  if (txResult.error) {
+    throw new Error(
+      `Deploy tx failed: ${txResult.error.data.label ?? txResult.error.message ?? "Unknown error"}`
+    );
   }
 
   return {
-    txHash,
-    tokenAddress: txResult.address!,
+    txHash: result.txHash,
+    tokenAddress: txResult.address,
   };
 }
 
@@ -110,14 +103,34 @@ export async function updateRewardRecipient(
     newRecipient,
   });
 
-  if ("error" in result && result.error) {
-    const err = result.error as { data?: { label?: string } };
+  if (result.error) {
     throw new Error(
-      `updateRewardRecipient failed: ${err.data?.label ?? "Unknown error"}`
+      `updateRewardRecipient failed: ${result.error.data.label ?? "Unknown error"}`
     );
   }
 
-  return { txHash: (result as { txHash: `0x${string}` }).txHash };
+  return { txHash: result.txHash };
+}
+
+export async function updateRewardAdmin(
+  tokenAddress: `0x${string}`,
+  rewardIndex: bigint,
+  newAdmin: `0x${string}`
+) {
+  const clanker = getClanker();
+  const result = await clanker.updateRewardAdmin({
+    token: tokenAddress,
+    rewardIndex,
+    newAdmin,
+  });
+
+  if (result.error) {
+    throw new Error(
+      `updateRewardAdmin failed: ${result.error.data.label ?? "Unknown error"}`
+    );
+  }
+
+  return { txHash: result.txHash };
 }
 
 export async function updateVaultBeneficiary(
@@ -147,8 +160,8 @@ export async function claimFees(
     rewardRecipient,
   });
 
-  if (available === BigInt(0)) {
-    return { txHash: null, amount: BigInt(0) };
+  if (available === 0n) {
+    return { txHash: null, amount: 0n };
   }
 
   const result = await clanker.claimRewards({
@@ -156,14 +169,26 @@ export async function claimFees(
     rewardRecipient,
   });
 
-  if ("error" in result && result.error) {
-    const err = result.error as { data?: { label?: string } };
+  if (result.error) {
     throw new Error(
-      `claimRewards failed: ${err.data?.label ?? "Unknown error"}`
+      `claimRewards failed: ${result.error.data.label ?? "Unknown error"}`
     );
   }
 
-  return { txHash: (result as { txHash: `0x${string}` }).txHash, amount: available };
+  return { txHash: result.txHash, amount: available };
+}
+
+export async function claimVaultedTokens(tokenAddress: `0x${string}`) {
+  const clanker = getClanker();
+  const result = await clanker.claimVaultedTokens({ token: tokenAddress });
+
+  if (result.error) {
+    throw new Error(
+      `claimVaultedTokens failed: ${result.error.data.label ?? "Unknown error"}`
+    );
+  }
+
+  return { txHash: result.txHash };
 }
 
 export async function getTokenRewards(tokenAddress: `0x${string}`) {
