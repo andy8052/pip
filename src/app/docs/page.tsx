@@ -38,7 +38,7 @@ const SECTIONS = [
     id: "fee-structure",
     title: "Fee Structure",
     children: [
-      { id: "fee-split", title: "80/20 Fee Split" },
+      { id: "fee-split", title: "Fee Distribution" },
       { id: "fee-collection", title: "Fee Collection" },
       { id: "claiming-fees", title: "Claiming Fees" },
     ],
@@ -65,7 +65,7 @@ const SECTIONS = [
     id: "technical-architecture",
     title: "Technical Architecture",
     children: [
-      { id: "clanker-v4", title: "Clanker v4 Protocol" },
+      { id: "doppler-protocol", title: "Doppler Protocol" },
       { id: "base-l2", title: "Base L2 Network" },
       { id: "contract-addresses", title: "Contract Addresses" },
     ],
@@ -252,7 +252,7 @@ export default function DocsPage() {
               </h1>
               <Paragraph>
                 Comprehensive documentation for the pip platform — a permissionless token
-                launcher built on Base using the Clanker v4 protocol. Learn how token creation,
+                launcher built on Base using the Doppler protocol. Learn how token creation,
                 fee sharing, vesting, and the deflationary $PIPAI mechanics work under the hood.
               </Paragraph>
             </div>
@@ -263,8 +263,8 @@ export default function DocsPage() {
             <SubHeading id="what-is-pip">What is pip?</SubHeading>
             <Paragraph>
               pip is a platform that lets anyone create an ERC-20 token for any X (Twitter) profile
-              in seconds. The token is deployed on Base L2 through the Clanker v4 protocol, which
-              handles liquidity pool creation, fee distribution, and token vesting automatically.
+              in seconds. The token is deployed on Base L2 through the Doppler protocol using rehype
+              pools, which handle liquidity pool creation, fee distribution, and token vesting automatically.
             </Paragraph>
             <Paragraph>
               The key innovation is that the person the token is created <em>for</em> doesn&apos;t need to
@@ -288,11 +288,11 @@ export default function DocsPage() {
                 },
                 {
                   term: "Profile Owner",
-                  definition: "The X account the token is created for. They receive 10% vested supply and claim 80% of trading fees.",
+                  definition: "The X account the token is created for. They receive 10% vested supply and 90% of the beneficiary fee share.",
                 },
                 {
-                  term: "Clanker v4",
-                  definition: "The underlying protocol that handles token deployment, Uniswap V4 pool creation, fee management, and token vesting.",
+                  term: "Doppler Protocol",
+                  definition: "The underlying protocol that handles token deployment, Uniswap V4 multicurve pool creation with rehype hooks, fee management, and token vesting.",
                 },
                 {
                   term: "$PIPAI",
@@ -345,9 +345,9 @@ export default function DocsPage() {
                     "Choose a token name, ticker symbol ($TICKER), and optionally upload a custom image. These become the on-chain metadata.",
                 },
                 {
-                  title: "Deploy via Clanker v4",
+                  title: "Deploy via Doppler",
                   description:
-                    "pip calls the Clanker v4 factory contract to deploy the ERC-20 token, create a Uniswap V4 pool (token/WETH), lock liquidity, and configure reward distribution — all in a single transaction.",
+                    "pip uses the Doppler protocol to deploy the ERC-20 token, create a Uniswap V4 multicurve pool with a rehype hook (token/WETH), configure beneficiary fee distribution, and set up vesting — all in a single transaction.",
                 },
                 {
                   title: "Token goes live",
@@ -360,58 +360,58 @@ export default function DocsPage() {
             {/* Smart Contract Deployment */}
             <SubHeading id="smart-contract-deployment">Smart Contract Deployment</SubHeading>
             <Paragraph>
-              Under the hood, pip interacts with the Clanker v4 Factory contract to deploy tokens.
+              Under the hood, pip uses the Doppler SDK to deploy tokens via the Airlock factory.
               Each deployment creates:
             </Paragraph>
 
             <ul className="flex flex-col gap-[var(--space-2)] pl-[var(--space-4)] sm:pl-[var(--space-6)] text-[var(--text-xs)] sm:text-[var(--text-sm)] leading-[var(--leading-relaxed)] text-[var(--fg-muted)] list-disc marker:text-[var(--fg-subtle)]">
-              <li>A new ERC-20 token contract with the specified name and symbol</li>
-              <li>A Uniswap V4 pool (token/WETH pair) via the V4 PoolManager singleton</li>
-              <li>A locked liquidity position through the Clanker Locker contract</li>
-              <li>Reward recipients configured in the fee locker (80% profile owner / 20% platform)</li>
-              <li>A vesting allocation in the Clanker Vault for the profile owner (10% of supply)</li>
+              <li>A new DERC-20 token contract with the specified name, symbol, and built-in vesting</li>
+              <li>A Uniswap V4 multicurve pool (token/WETH pair) with multiple bonding curves</li>
+              <li>A RehypeDopplerHook for advanced fee distribution (10% LP, 90% beneficiaries)</li>
+              <li>Beneficiary fee streaming configured at creation (5% protocol, 5% pip, 90% creator)</li>
+              <li>Token vesting for the profile owner (10% of supply, 30-day lockup + 30-day vest)</li>
             </ul>
 
-            <CodeBlock title="Clanker v4 Factory">
-{`// Simplified deployment flow (via clanker-sdk v4)
-ClankerFactory.deployToken({
-  name: "Token Name",
-  symbol: "TICKER",
-  image: "ipfs://...",
-  pool: { pairedToken: "WETH" },
-  fees: { type: "static", clankerFee: 125, pairedFee: 125 },
-  rewards: {
-    recipients: [
-      { bps: 8000, token: "Paired" }, // 80% → profile owner
-      { bps: 2000, token: "Paired" }, // 20% → platform
-    ],
-  },
-  vault: {
-    percentage: 10,           // 10% of supply
-    lockupDuration: 2592000,  // 30-day lockup
-    vestingDuration: 2592000, // 30-day linear vest
-  },
-})`}
+            <CodeBlock title="Doppler Multicurve + Rehype Hook">
+{`// Simplified deployment flow (via @whetstone-research/doppler-sdk)
+sdk.buildMulticurveAuction()
+  .tokenConfig({ name: "Token Name", symbol: "TICKER", tokenURI: "..." })
+  .saleConfig({
+    initialSupply: 1_000_000_000e18,   // 1B tokens
+    numTokensToSell: 900_000_000e18,   // 90% for sale
+    numeraire: WETH,
+  })
+  .withMarketCapPresets({ beneficiaries: [...] })
+  .withRehypeDopplerHook({
+    customFee: 3000,                   // 0.3% swap fee
+    lpPercentWad: 0.1e18,              // 10% → LPs
+    beneficiaryPercentWad: 0.9e18,     // 90% → beneficiaries
+  })
+  .withVesting({
+    cliffDuration: 2_592_000,          // 30-day lockup
+    duration: 5_184_000,               // 60 days total (30 cliff + 30 linear)
+  })
+  .build()`}
             </CodeBlock>
 
             {/* Liquidity Pool */}
             <SubHeading id="liquidity-pool">Liquidity Pool</SubHeading>
             <Paragraph>
-              Every token launched through pip gets a Uniswap V4 pool paired with WETH
+              Every token launched through pip gets a Uniswap V4 multicurve pool paired with WETH
               (Wrapped Ether on Base). Uniswap V4 uses a singleton PoolManager contract
               rather than deploying individual pool contracts, which improves gas efficiency
               and enables hooks for custom pool behavior.
             </Paragraph>
             <Paragraph>
-              The liquidity position is locked in the Clanker Locker contract — it cannot be
-              removed or rug-pulled. This is a core safety guarantee of the Clanker v4 protocol.
-              Swap fees from the pool are distributed to reward recipients (the profile owner
-              and the platform) via the fee locker.
+              The liquidity is managed by the Doppler protocol with a NoOp migration strategy —
+              it cannot be removed or rug-pulled. A RehypeDopplerHook manages swap fees and
+              distributes them according to the configured beneficiary shares: 10% to LPs and
+              90% to beneficiaries (5% protocol, 5% pip, 90% creator).
             </Paragraph>
 
             <Callout type="tip" title="Locked liquidity">
-              All liquidity is permanently locked in the Clanker Locker contract. Neither the launcher
-              nor the profile owner can remove liquidity — only collect reward distributions.
+              All liquidity is permanently locked in the Doppler protocol with NoOp migration. Neither
+              the launcher nor the profile owner can remove liquidity — only collect fee distributions.
             </Callout>
 
             <Separator className="my-[var(--space-4)]" />
@@ -423,27 +423,27 @@ ClankerFactory.deployToken({
               to the profile owner the token was created for.
             </Paragraph>
 
-            {/* 80/20 Fee Split */}
-            <SubHeading id="fee-split">80/20 Fee Split</SubHeading>
+            {/* Fee Split */}
+            <SubHeading id="fee-split">Fee Distribution</SubHeading>
             <Paragraph>
-              Each pool is configured with a static fee of 125 bps (1.25%) on both the token
-              and WETH side. Fees generated from trading are distributed between two reward
-              recipients:
+              Each pool is configured with a 0.3% swap fee via the RehypeDopplerHook. Fees are
+              first split between LPs (10%) and beneficiaries (90%). The beneficiary share is
+              then distributed as follows:
             </Paragraph>
 
-            <div className="grid gap-[var(--space-3)] sm:gap-[var(--space-4)] sm:grid-cols-2">
+            <div className="grid gap-[var(--space-3)] sm:gap-[var(--space-4)] sm:grid-cols-3">
               <Card variant="default" padding="md" className="border-[var(--status-success-border)] sm:p-[var(--space-6)]">
                 <CardContent>
                   <VStack gap="sm">
                     <HStack align="center" gap="sm" wrap>
                       <span className="text-[var(--text-2xl)] sm:text-[var(--text-3xl)] font-[var(--font-bold)] text-[var(--status-success)]">
-                        80%
+                        90%
                       </span>
-                      <Badge variant="success">Profile Owner</Badge>
+                      <Badge variant="success">Creator</Badge>
                     </HStack>
                     <Text variant="body-sm">
-                      The majority of all trading fees goes to the X profile the token
-                      was created for. This is claimable once the profile owner verifies
+                      The majority of beneficiary fees goes to the X profile the token
+                      was created for. Claimable once the profile owner verifies
                       their identity.
                     </Text>
                   </VStack>
@@ -454,13 +454,29 @@ ClankerFactory.deployToken({
                   <VStack gap="sm">
                     <HStack align="center" gap="sm" wrap>
                       <span className="text-[var(--text-2xl)] sm:text-[var(--text-3xl)] font-[var(--font-bold)] text-[var(--accent-default)]">
-                        20%
+                        5%
                       </span>
-                      <Badge variant="primary">Platform</Badge>
+                      <Badge variant="primary">Pip</Badge>
                     </HStack>
                     <Text variant="body-sm">
-                      The platform&apos;s share of trading fees. 100% of this amount is used
-                      to buy and burn $PIPAI, making the platform token deflationary.
+                      Pip&apos;s share of trading fees. Used to buy and burn $PIPAI,
+                      making the platform token deflationary.
+                    </Text>
+                  </VStack>
+                </CardContent>
+              </Card>
+              <Card variant="default" padding="md" className="sm:p-[var(--space-6)]">
+                <CardContent>
+                  <VStack gap="sm">
+                    <HStack align="center" gap="sm" wrap>
+                      <span className="text-[var(--text-2xl)] sm:text-[var(--text-3xl)] font-[var(--font-bold)] text-[var(--fg-muted)]">
+                        5%
+                      </span>
+                      <Badge>Protocol</Badge>
+                    </HStack>
+                    <Text variant="body-sm">
+                      The Doppler protocol&apos;s share, required by the Airlock contract
+                      for protocol sustainability.
                     </Text>
                   </VStack>
                 </CardContent>
@@ -470,14 +486,14 @@ ClankerFactory.deployToken({
             {/* Fee Collection */}
             <SubHeading id="fee-collection">Fee Collection</SubHeading>
             <Paragraph>
-              Fees accumulate in the Clanker Fee Locker contract as the token is traded. The locker
-              holds the locked Uniswap V4 liquidity position and collects swap fees automatically.
-              Neither party needs to do anything for fees to accumulate — they accrue with every trade.
+              Fees accumulate in the Doppler streamable fees locker as the token is traded. The
+              RehypeDopplerHook collects swap fees automatically and distributes them according
+              to the configured beneficiary shares.
             </Paragraph>
             <Paragraph>
-              The fee locker tracks unclaimed rewards for both the profile owner (80%) and the
-              platform (20%). Rewards are configured as &ldquo;Paired&rdquo; token type, meaning fees are
-              denominated in WETH (the paired token in the pool).
+              Anyone can trigger fee collection by calling the <InlineCode>collectFees</InlineCode> function
+              on the multicurve pool. Pip runs a periodic cron job to collect and distribute fees
+              across all deployed tokens automatically.
             </Paragraph>
 
             {/* Claiming Fees */}
@@ -498,17 +514,16 @@ ClankerFactory.deployToken({
                   description: "View all tokens created for your profile and their accumulated fees.",
                 },
                 {
-                  title: "Claim fees",
+                  title: "Claim your token",
                   description:
-                    "Click the claim button to collect your 80% share. Fees are sent directly to your connected wallet.",
+                    "Click the claim button to register your wallet. Accumulated fees will be distributed to your wallet by the platform.",
                 },
               ]}
             />
 
             <Callout type="info" title="When to claim">
-              There&apos;s no deadline for claiming fees. They accumulate indefinitely in the fee locker
-              and can be claimed at any time. However, claiming more frequently means your wallet
-              balance updates sooner.
+              There&apos;s no deadline for claiming. Fees accumulate indefinitely and vested tokens
+              remain available. Claim at any time to register your wallet for fee distributions.
             </Callout>
 
             <Separator className="my-[var(--space-4)]" />
@@ -523,9 +538,9 @@ ClankerFactory.deployToken({
             {/* Vesting Mechanism */}
             <SubHeading id="vesting-mechanism">Vesting Mechanism</SubHeading>
             <Paragraph>
-              The vesting is handled by the Clanker Vault contract. When a token is deployed, the
-              factory contract automatically allocates 10% of the token supply to a vesting position
-              in the vault, designated for the profile owner.
+              Vesting is built directly into the DERC-20 token contract created by Doppler. When a
+              token is deployed, 10% of the total supply (100 million tokens) is allocated to a
+              vesting schedule for the profile owner.
             </Paragraph>
             <Paragraph>
               This creates a strong alignment between the profile owner and the token community —
@@ -566,7 +581,7 @@ ClankerFactory.deployToken({
                   <tr className="border-b border-[var(--border-default)]">
                     <td className="px-[var(--space-4)] py-[var(--space-3)]">Vesting Contract</td>
                     <td className="px-[var(--space-4)] py-[var(--space-3)]">
-                      <InlineCode>ClankerVault</InlineCode>
+                      <InlineCode>DERC-20 (built-in)</InlineCode>
                     </td>
                   </tr>
                   <tr>
@@ -583,7 +598,7 @@ ClankerFactory.deployToken({
                 { label: "Recipient", value: "X profile owner (claimable after verification)" },
                 { label: "Lockup Period", value: "30 days (tokens fully locked)" },
                 { label: "Vesting Period", value: "30 days (linear unlock after lockup)" },
-                { label: "Vesting Contract", value: "ClankerVault" },
+                { label: "Vesting Contract", value: "DERC-20 (built-in)" },
               ].map((row) => (
                 <div key={row.label} className="rounded-[var(--radius-md)] border border-[var(--border-default)] bg-[var(--bg-raised)] p-[var(--space-3)]">
                   <Text variant="caption" color="subtle" className="mb-[var(--space-1)]">{row.label}</Text>
@@ -613,8 +628,8 @@ ClankerFactory.deployToken({
             </CodeBlock>
 
             <Paragraph>
-              The <InlineCode>amountAvailableToClaim</InlineCode> function on the Clanker Vault contract
-              returns the current amount of tokens that can be claimed at any given time, calculated
+              The <InlineCode>getAvailableVestedAmount</InlineCode> function on the DERC-20 token contract
+              returns the current amount of tokens that can be released at any given time, calculated
               based on the linear vesting formula.
             </Paragraph>
 
@@ -622,10 +637,8 @@ ClankerFactory.deployToken({
             <SubHeading id="claiming-vested-tokens">Claiming Vested Tokens</SubHeading>
             <Paragraph>
               To claim vested tokens and fees, the profile owner must first verify their X account
-              on pip. Once verified, pip performs two on-chain transactions: it transfers the reward
-              recipient (for the 80% fee share) to the profile owner&apos;s wallet, and transfers the
-              vault allocation admin to their wallet — enabling them to claim both fees and vested
-              tokens directly.
+              on pip. Once verified, pip records the claim in the database and the platform admin
+              distributes accumulated fees and vested tokens to the creator&apos;s wallet.
             </Paragraph>
 
             <StepList
@@ -635,14 +648,14 @@ ClankerFactory.deployToken({
                   description: "Sign in with the X account the token was created for.",
                 },
                 {
-                  title: "On-chain transfers",
+                  title: "Register your wallet",
                   description:
-                    "pip calls updateRewardRecipient to redirect the 80% fee share to your wallet, and editAllocationAdmin on the ClankerVault to transfer vesting claim rights.",
+                    "Provide your wallet address on the pip dashboard. This registers you as the rightful owner of the token's creator share.",
                 },
                 {
-                  title: "Claim tokens & fees",
+                  title: "Receive distributions",
                   description:
-                    "Claim your vested tokens and accumulated trading fees via the dashboard. Both are sent directly to your connected wallet.",
+                    "The platform periodically distributes your share of trading fees and vested tokens to your registered wallet.",
                 },
               ]}
             />
@@ -674,7 +687,7 @@ ClankerFactory.deployToken({
                         Fees are collected
                       </Text>
                       <Text variant="body-sm">
-                        The platform earns 20% of trading fees from every token launched through pip.
+                        The platform earns 5% of beneficiary fees from every token launched through pip.
                         These accumulate in the platform&apos;s admin wallet across all deployed tokens.
                       </Text>
                     </VStack>
@@ -732,7 +745,7 @@ ClankerFactory.deployToken({
        ↓
 More trading volume across all tokens
        ↓
-More fees collected (20% platform share)
+More fees collected (5% platform share)
        ↓
 More $PIPAI bought on open market
        ↓
@@ -831,38 +844,38 @@ a larger share of the ecosystem`}
               covers the key technical components.
             </Paragraph>
 
-            {/* Clanker v4 */}
-            <SubHeading id="clanker-v4">Clanker v4 Protocol</SubHeading>
+            {/* Doppler Protocol */}
+            <SubHeading id="doppler-protocol">Doppler Protocol</SubHeading>
             <Paragraph>
-              Clanker v4 is the latest version of the Clanker token deployment protocol. It builds
-              on Uniswap V4&apos;s singleton PoolManager and hooks architecture to provide a factory
-              pattern for creating ERC-20 tokens with built-in liquidity, fee distribution, and
-              token vesting. Key features include:
+              Doppler is a fair token launch protocol built on Uniswap V4. It uses multicurve
+              pools with rehype hooks to provide advanced liquidity bootstrapping, fee distribution,
+              and token vesting. Key features include:
             </Paragraph>
 
             <ul className="flex flex-col gap-[var(--space-2)] pl-[var(--space-4)] sm:pl-[var(--space-6)] text-[var(--text-xs)] sm:text-[var(--text-sm)] leading-[var(--leading-relaxed)] text-[var(--fg-muted)] list-disc marker:text-[var(--fg-subtle)]">
               <li>
                 <strong className="text-[var(--fg-default)]">Uniswap V4 native</strong> — Pools are
                 created via the V4 PoolManager singleton with hook support, enabling custom fee
-                logic and MEV protection
+                logic and advanced pool behavior
               </li>
               <li>
-                <strong className="text-[var(--fg-default)]">Static &amp; dynamic fees</strong> — Pools
-                can use static fee configurations (e.g., 125 bps) or dynamic fee hooks that adjust
-                based on market conditions
+                <strong className="text-[var(--fg-default)]">Multicurve pools</strong> — Multiple
+                bonding curves in a single pool for better price discovery and liquidity distribution
+                across different market cap ranges
+              </li>
+              <li>
+                <strong className="text-[var(--fg-default)]">RehypeDopplerHook</strong> — Advanced
+                fee distribution hook that splits swap fees between LPs, beneficiaries, and buyback
+                destinations with configurable percentages
               </li>
               <li>
                 <strong className="text-[var(--fg-default)]">Built-in vesting</strong> — Native
-                support for token vesting through the ClankerVault contract with configurable
-                lockup and vesting durations
+                token vesting built into the DERC-20 token contract with configurable cliff and
+                linear vesting durations
               </li>
               <li>
-                <strong className="text-[var(--fg-default)]">Liquidity locker</strong> — Permanent
-                liquidity locking with configurable reward distribution between multiple recipients
-              </li>
-              <li>
-                <strong className="text-[var(--fg-default)]">Admin controls</strong> — Transferable
-                reward recipient and vault allocation admin roles for flexible claim management
+                <strong className="text-[var(--fg-default)]">Streamable fee locker</strong> — Fees
+                are streamed to configured beneficiaries, ensuring fair and continuous distribution
               </li>
             </ul>
 
@@ -901,9 +914,6 @@ a larger share of the ecosystem`}
             {/* Contract addresses — stacked cards on mobile, table on sm+ */}
             <div className="flex flex-col gap-[var(--space-2)] sm:hidden">
               {[
-                { name: "Clanker Factory v4", address: CONTRACTS.clankerFactoryV4 },
-                { name: "Fee Locker v4", address: CONTRACTS.clankerFeeLockerV4 },
-                { name: "Clanker Vault", address: CONTRACTS.clankerVault },
                 { name: "WETH", address: CONTRACTS.weth },
                 { name: "$PIPAI Token", address: CONTRACTS.pipaiToken },
               ].map((c) => (
@@ -929,30 +939,6 @@ a larger share of the ecosystem`}
                 </thead>
                 <tbody className="text-[var(--fg-muted)]">
                   <tr className="border-b border-[var(--border-default)]">
-                    <td className="px-[var(--space-4)] py-[var(--space-3)] whitespace-nowrap">Clanker Factory v4</td>
-                    <td className="px-[var(--space-4)] py-[var(--space-3)]">
-                      <code className="break-all font-[var(--font-family-mono)] text-[var(--text-xs)]">
-                        {CONTRACTS.clankerFactoryV4}
-                      </code>
-                    </td>
-                  </tr>
-                  <tr className="border-b border-[var(--border-default)]">
-                    <td className="px-[var(--space-4)] py-[var(--space-3)] whitespace-nowrap">Fee Locker v4</td>
-                    <td className="px-[var(--space-4)] py-[var(--space-3)]">
-                      <code className="break-all font-[var(--font-family-mono)] text-[var(--text-xs)]">
-                        {CONTRACTS.clankerFeeLockerV4}
-                      </code>
-                    </td>
-                  </tr>
-                  <tr className="border-b border-[var(--border-default)]">
-                    <td className="px-[var(--space-4)] py-[var(--space-3)] whitespace-nowrap">Clanker Vault</td>
-                    <td className="px-[var(--space-4)] py-[var(--space-3)]">
-                      <code className="break-all font-[var(--font-family-mono)] text-[var(--text-xs)]">
-                        {CONTRACTS.clankerVault}
-                      </code>
-                    </td>
-                  </tr>
-                  <tr className="border-b border-[var(--border-default)]">
                     <td className="px-[var(--space-4)] py-[var(--space-3)] whitespace-nowrap">WETH</td>
                     <td className="px-[var(--space-4)] py-[var(--space-3)]">
                       <code className="break-all font-[var(--font-family-mono)] text-[var(--text-xs)]">
@@ -971,6 +957,12 @@ a larger share of the ecosystem`}
                 </tbody>
               </table>
             </div>
+
+            <Callout type="info" title="Doppler contract addresses">
+              Doppler protocol contracts (Airlock, multicurve initializer, RehypeDopplerHook, etc.)
+              are resolved automatically by the SDK for each supported chain. Individual token pool
+              addresses are visible on Basescan after deployment.
+            </Callout>
 
             <Separator className="my-[var(--space-4)]" />
 
@@ -1004,10 +996,10 @@ a larger share of the ecosystem`}
                 <CardContent>
                   <VStack gap="sm">
                     <Badge variant="primary">Trading Fees</Badge>
-                    <Text variant="h4">80% of fees</Text>
+                    <Text variant="h4">90% of beneficiary fees</Text>
                     <Text variant="body-sm">
-                      You receive 80% of all swap fees generated by your token&apos;s pool,
-                      paid in WETH. These accumulate automatically and can be claimed anytime.
+                      You receive 90% of the beneficiary fee share from your token&apos;s pool.
+                      Fees accumulate automatically and are distributed to your wallet after claiming.
                     </Text>
                   </VStack>
                 </CardContent>
@@ -1055,9 +1047,9 @@ a larger share of the ecosystem`}
             <ul className="flex flex-col gap-[var(--space-2)] pl-[var(--space-4)] sm:pl-[var(--space-6)] text-[var(--text-xs)] sm:text-[var(--text-sm)] leading-[var(--leading-relaxed)] text-[var(--fg-muted)] list-disc marker:text-[var(--fg-subtle)]">
               <li>Fees accumulate in real-time with every trade</li>
               <li>No minimum claim amount — claim any amount at any time</li>
-              <li>Fees are paid in WETH (the paired token in the pool)</li>
-              <li>Claiming requires a small gas fee on Base (typically fractions of a cent)</li>
-              <li>Unclaimed fees remain safely in the fee locker contract indefinitely</li>
+              <li>Fees are distributed from the pool&apos;s beneficiary share</li>
+              <li>The platform handles fee collection and distribution automatically</li>
+              <li>Unclaimed fees remain safely in the protocol contracts indefinitely</li>
             </ul>
 
             <Separator className="my-[var(--space-4)]" />
@@ -1073,7 +1065,7 @@ a larger share of the ecosystem`}
                 },
                 {
                   q: "What happens if the profile owner never claims?",
-                  a: "The vested tokens remain in the Clanker Vault contract and trading fees remain in the fee locker. They don't expire — the profile owner can claim at any time in the future.",
+                  a: "The vested tokens remain in the token contract and trading fees continue to accumulate. They don't expire — the profile owner can claim at any time in the future.",
                 },
                 {
                   q: "Can multiple tokens be created for the same X profile?",
@@ -1081,7 +1073,7 @@ a larger share of the ecosystem`}
                 },
                 {
                   q: "Can the liquidity be removed (rug pull)?",
-                  a: "No. All liquidity is permanently locked in the Clanker Locker contract. Neither the token launcher, the profile owner, nor the platform can remove liquidity. Only reward distributions (trading fees) can be claimed.",
+                  a: "No. All liquidity is permanently locked in the Doppler protocol with NoOp migration. Neither the token launcher, the profile owner, nor the platform can remove liquidity. Only fee distributions can be claimed.",
                 },
                 {
                   q: "What chain do I need to be on?",
@@ -1089,11 +1081,11 @@ a larger share of the ecosystem`}
                 },
                 {
                   q: "How does the $PIPAI buy & burn work?",
-                  a: "The platform collects 20% of all trading fees. These fees are periodically used to purchase $PIPAI on the open market and then send the purchased tokens to the zero address (0x000...0), permanently removing them from circulation.",
+                  a: "The platform collects 5% of beneficiary trading fees. These fees are periodically used to purchase $PIPAI on the open market and then send the purchased tokens to the zero address (0x000...0), permanently removing them from circulation.",
                 },
                 {
                   q: "Is pip open source?",
-                  a: "The smart contracts (Clanker v4) are verified and readable on Basescan. All token deployments, fee distributions, and burn transactions are fully transparent and verifiable on-chain.",
+                  a: "The smart contracts (Doppler protocol) are verified and readable on Basescan. All token deployments, fee distributions, and burn transactions are fully transparent and verifiable on-chain.",
                 },
                 {
                   q: "What wallets are supported?",

@@ -9,15 +9,13 @@ export interface TokenLaunch {
   tokenSymbol: string;
   tokenImageUrl: string | null;
   deployTxHash: string | null;
-  poolAddress: string | null;
-  clankerRequestKey: string;
+  /** Doppler V4 pool identifier (bytes32 hex) */
+  poolId: string | null;
   status: "pending" | "deploying" | "deployed" | "failed";
   claimed: boolean;
   claimedByUserId: string | null;
   claimedAt: Date | null;
   claimerWalletAddress: string | null;
-  claimTxHash: string | null;
-  vaultClaimTxHash: string | null;
   createdAt: Date;
 }
 

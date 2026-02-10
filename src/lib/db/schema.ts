@@ -32,17 +32,13 @@ export const launches = pgTable("launches", {
   tokenSymbol: varchar("token_symbol", { length: 16 }).notNull(),
   tokenImageUrl: text("token_image_url"),
   deployTxHash: text("deploy_tx_hash"),
-  poolAddress: text("pool_address"),
-  clankerRequestKey: varchar("clanker_request_key", { length: 32 })
-    .unique()
-    .notNull(),
+  /** Doppler V4 pool identifier (bytes32 hex) */
+  poolId: text("pool_id"),
   status: varchar("status", { length: 32 }).notNull().default("pending"),
   claimed: boolean("claimed").notNull().default(false),
   claimedByUserId: uuid("claimed_by_user_id").references(() => users.id),
   claimedAt: timestamp("claimed_at"),
   claimerWalletAddress: text("claimer_wallet_address"),
-  claimTxHash: text("claim_tx_hash"),
-  vaultClaimTxHash: text("vault_claim_tx_hash"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
