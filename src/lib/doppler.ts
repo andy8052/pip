@@ -71,8 +71,8 @@ const VESTING_CLIFF_SECONDS = 2_592_000;
 /** Linear vesting duration after cliff: 30 days */
 const VESTING_DURATION_SECONDS = 2_592_000;
 
-/** Swap fee: 0.3% */
-const CUSTOM_SWAP_FEE = 3000;
+/** Swap fee: 1.2% */
+const CUSTOM_SWAP_FEE = 12000;
 
 /**
  * RehypeDopplerHook fee distribution (must sum to WAD = 1e18 = 100%):

@@ -383,7 +383,7 @@ sdk.buildMulticurveAuction()
   })
   .withMarketCapPresets({ beneficiaries: [...] })
   .withRehypeDopplerHook({
-    customFee: 3000,                   // 0.3% swap fee
+    customFee: 12000,                  // 1.2% swap fee
     lpPercentWad: 0.1e18,              // 10% → LPs
     beneficiaryPercentWad: 0.9e18,     // 90% → beneficiaries
   })
@@ -426,7 +426,7 @@ sdk.buildMulticurveAuction()
             {/* Fee Split */}
             <SubHeading id="fee-split">Fee Distribution</SubHeading>
             <Paragraph>
-              Each pool is configured with a 0.3% swap fee via the RehypeDopplerHook. Fees are
+              Each pool is configured with a 1.2% swap fee via the RehypeDopplerHook. Fees are
               first split between LPs (10%) and beneficiaries (90%). The beneficiary share is
               then distributed as follows:
             </Paragraph>
