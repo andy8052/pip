@@ -24,7 +24,7 @@ export async function GET(req: NextRequest) {
     if (!launch.tokenAddress) continue;
 
     try {
-      // Claim fees for admin wallet (slot 1 = 20% platform revenue, always admin)
+      // Claim fees for admin wallet (slot 1 = 10% platform revenue, always admin)
       const { txHash, amount } = await claimFees(
         launch.tokenAddress as `0x${string}`,
         getAdminAddress()

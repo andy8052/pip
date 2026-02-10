@@ -49,13 +49,13 @@ export async function deployToken(params: DeployTokenParams) {
         {
           admin: adminAddress,
           recipient: adminAddress,
-          bps: 8000,
+          bps: 9000,
           token: "Paired",
         },
         {
           admin: adminAddress,
           recipient: adminAddress,
-          bps: 2000,
+          bps: 1000,
           token: "Paired",
         },
       ],
