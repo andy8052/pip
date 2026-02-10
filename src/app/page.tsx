@@ -10,6 +10,7 @@ import {
   Container,
   Separator,
 } from "@/design-system";
+import { CONTRACTS, PIPAI_TOKEN_URL, PIPAI_DEXSCREENER_URL } from "@/lib/contracts";
 
 /* ─────────────────────────────────────────────────────────────────────────────
  * ICONS — Inline SVGs to avoid extra dependencies.
@@ -179,6 +180,46 @@ function IconArrowRight({ className }: { className?: string }) {
   );
 }
 
+function IconFlame({ className }: { className?: string }) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z" />
+    </svg>
+  );
+}
+
+function IconExternalLink({ className }: { className?: string }) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <path d="M15 3h6v6" />
+      <path d="M10 14 21 3" />
+      <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+    </svg>
+  );
+}
+
 /* ─────────────────────────────────────────────────────────────────────────────
  * DATA — Static content for landing page sections.
  * ────────────────────────────────────────────────────────────────────────── */
@@ -231,6 +272,12 @@ const FEATURES = [
     title: "Built on Clanker v4",
     description:
       "The latest version of the Clanker protocol with improved security, gas efficiency, and vesting mechanics.",
+  },
+  {
+    icon: IconFlame,
+    title: "$PIPAI buy & burn",
+    description:
+      "All platform fees are used to buy and burn $PIPAI — the native platform token. Every launch makes $PIPAI more scarce.",
   },
   {
     icon: IconLink,
@@ -512,6 +559,167 @@ export default function LandingPage() {
         </Container>
       </section>
 
+      {/* ── $PIPAI TOKEN ─────────────────────────────────────────────── */}
+      <section id="pipai" className="scroll-mt-16 bg-[var(--bg-subtle)]">
+        <Container className="py-[var(--space-16)] sm:py-[var(--space-24)]">
+          <VStack gap="xl" className="sm:gap-[var(--space-16)]">
+            <VStack align="center" gap="sm" className="text-center">
+              <Text variant="overline" color="accent" as="span">
+                Platform Token
+              </Text>
+              <Text variant="h2" align="center">
+                $PIPAI — Deflationary by Design
+              </Text>
+              <Text
+                variant="body"
+                color="muted"
+                align="center"
+                className="max-w-xl text-[var(--text-lg)] leading-[var(--leading-relaxed)]"
+              >
+                Every platform fee collected is used to buy and permanently burn
+                $PIPAI. More tokens launched means more fees, more burns, and an
+                ever-shrinking supply.
+              </Text>
+            </VStack>
+
+            <div className="grid gap-[var(--space-6)] sm:gap-[var(--space-8)] md:grid-cols-3">
+              {/* How it works card */}
+              <Card
+                variant="default"
+                padding="lg"
+                className="relative overflow-hidden"
+              >
+                <CardContent>
+                  <VStack gap="md">
+                    <div className="flex size-12 items-center justify-center rounded-[var(--radius-lg)] bg-[var(--accent-subtle)]">
+                      <IconCoins className="size-6 text-[var(--accent-default)]" />
+                    </div>
+                    <VStack gap="xs">
+                      <Text variant="h4">Fees are collected</Text>
+                      <Text variant="body-sm">
+                        The platform earns 20% of trading fees from every token
+                        launched through pip. These fees accumulate in the
+                        platform wallet.
+                      </Text>
+                    </VStack>
+                  </VStack>
+                </CardContent>
+              </Card>
+
+              {/* Buy card */}
+              <Card
+                variant="default"
+                padding="lg"
+                className="relative overflow-hidden"
+              >
+                <CardContent>
+                  <VStack gap="md">
+                    <div className="flex size-12 items-center justify-center rounded-[var(--radius-lg)] bg-[var(--accent-subtle)]">
+                      <IconTrendingUp className="size-6 text-[var(--accent-default)]" />
+                    </div>
+                    <VStack gap="xs">
+                      <Text variant="h4">$PIPAI is bought</Text>
+                      <Text variant="body-sm">
+                        Collected fees are used to purchase $PIPAI on the open
+                        market — creating consistent buy pressure for the token.
+                      </Text>
+                    </VStack>
+                  </VStack>
+                </CardContent>
+              </Card>
+
+              {/* Burn card */}
+              <Card
+                variant="default"
+                padding="lg"
+                className="relative overflow-hidden"
+              >
+                <CardContent>
+                  <VStack gap="md">
+                    <div className="flex size-12 items-center justify-center rounded-[var(--radius-lg)] bg-[var(--accent-subtle)]">
+                      <IconFlame className="size-6 text-[var(--accent-default)]" />
+                    </div>
+                    <VStack gap="xs">
+                      <Text variant="h4">Tokens are burned</Text>
+                      <Text variant="body-sm">
+                        Purchased $PIPAI tokens are permanently burned —
+                        removing them from circulation forever and reducing total
+                        supply.
+                      </Text>
+                    </VStack>
+                  </VStack>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Token details card */}
+            <Card
+              variant="elevated"
+              padding="lg"
+              className="border-[var(--border-strong)] bg-[var(--bg-surface)]"
+            >
+              <CardContent>
+                <VStack gap="md">
+                  <HStack
+                    align="center"
+                    gap="sm"
+                    className="flex-col sm:flex-row"
+                  >
+                    <div className="flex size-10 items-center justify-center rounded-full bg-gradient-to-br from-[var(--color-primary-500)] to-[var(--color-warning-500)]">
+                      <IconFlame className="size-5 text-white" />
+                    </div>
+                    <VStack gap="none" align="center" className="sm:items-start">
+                      <Text
+                        variant="body"
+                        className="font-[var(--font-semibold)]"
+                      >
+                        $PIPAI
+                      </Text>
+                      <Text variant="caption" color="subtle" className="font-[var(--font-mono)] break-all text-center sm:text-left">
+                        {CONTRACTS.pipaiToken}
+                      </Text>
+                    </VStack>
+                    <Badge variant="primary" className="sm:ml-auto">
+                      Base Network
+                    </Badge>
+                  </HStack>
+
+                  <Separator />
+
+                  <HStack
+                    gap="sm"
+                    align="center"
+                    justify="center"
+                    wrap
+                  >
+                    <a
+                      href={PIPAI_TOKEN_URL}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <Button variant="secondary" size="sm">
+                        View on Basescan
+                        <IconExternalLink />
+                      </Button>
+                    </a>
+                    <a
+                      href={PIPAI_DEXSCREENER_URL}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <Button variant="secondary" size="sm">
+                        DEX Screener
+                        <IconExternalLink />
+                      </Button>
+                    </a>
+                  </HStack>
+                </VStack>
+              </CardContent>
+            </Card>
+          </VStack>
+        </Container>
+      </section>
+
       {/* ── STATS BAND ────────────────────────────────────────────────── */}
       <section className="border-y border-[var(--border-default)] bg-[var(--bg-subtle)]">
         <Container className="py-[var(--space-10)] sm:py-[var(--space-12)]">
@@ -519,8 +727,8 @@ export default function LandingPage() {
             {[
               { value: "80%", label: "Fee share for creators" },
               { value: "10%", label: "Token supply vested" },
-              { value: "1-click", label: "Token deployment" },
-              { value: "Base L2", label: "Fast & low cost" },
+              { value: "100%", label: "Platform fees → buy & burn" },
+              { value: "$PIPAI", label: "Deflationary platform token" },
             ].map((stat) => (
               <VStack key={stat.label} align="center" gap="xs">
                 <Text

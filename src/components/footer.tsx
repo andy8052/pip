@@ -7,6 +7,7 @@ import {
   Separator,
   Logo,
 } from "@/design-system";
+import { PIPAI_TOKEN_URL, PIPAI_DEXSCREENER_URL } from "@/lib/contracts";
 
 export function Footer() {
   return (
@@ -44,6 +45,30 @@ export function Footer() {
                   >
                     Dashboard
                   </Link>
+                </VStack>
+              </VStack>
+
+              <VStack gap="sm">
+                <Text variant="label" className="text-[var(--fg-subtle)]">
+                  $PIPAI Token
+                </Text>
+                <VStack gap="xs">
+                  <a
+                    href={PIPAI_TOKEN_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[var(--text-sm)] text-[var(--fg-muted)] transition-colors duration-150 hover:text-[var(--fg-default)] no-underline"
+                  >
+                    Basescan
+                  </a>
+                  <a
+                    href={PIPAI_DEXSCREENER_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[var(--text-sm)] text-[var(--fg-muted)] transition-colors duration-150 hover:text-[var(--fg-default)] no-underline"
+                  >
+                    DEX Screener
+                  </a>
                 </VStack>
               </VStack>
 
