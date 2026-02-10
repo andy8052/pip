@@ -292,7 +292,7 @@ export default function DocsPage() {
                 },
                 {
                   term: "Clanker v4",
-                  definition: "The underlying protocol that handles token deployment, Uniswap V3 pool creation, and fee locking.",
+                  definition: "The underlying protocol that handles token deployment, Uniswap V4 pool creation, fee management, and token vesting.",
                 },
                 {
                   term: "$PIPAI",
@@ -347,7 +347,7 @@ export default function DocsPage() {
                 {
                   title: "Deploy via Clanker v4",
                   description:
-                    "pip calls the Clanker v4 factory contract to deploy the ERC-20 token, create a Uniswap V3 liquidity pool, and configure fee locking — all in a single transaction.",
+                    "pip calls the Clanker v4 factory contract to deploy the ERC-20 token, create a Uniswap V4 pool (token/WETH), lock liquidity, and configure reward distribution — all in a single transaction.",
                 },
                 {
                   title: "Token goes live",
@@ -366,41 +366,52 @@ export default function DocsPage() {
 
             <ul className="flex flex-col gap-[var(--space-2)] pl-[var(--space-4)] sm:pl-[var(--space-6)] text-[var(--text-xs)] sm:text-[var(--text-sm)] leading-[var(--leading-relaxed)] text-[var(--fg-muted)] list-disc marker:text-[var(--fg-subtle)]">
               <li>A new ERC-20 token contract with the specified name and symbol</li>
-              <li>A Uniswap V3 concentrated liquidity pool (token/WETH pair)</li>
-              <li>A fee locker position through the Clanker Fee Locker contract</li>
-              <li>A vesting allocation in the Clanker Vault for the profile owner</li>
+              <li>A Uniswap V4 pool (token/WETH pair) via the V4 PoolManager singleton</li>
+              <li>A locked liquidity position through the Clanker Locker contract</li>
+              <li>Reward recipients configured in the fee locker (80% profile owner / 20% platform)</li>
+              <li>A vesting allocation in the Clanker Vault for the profile owner (10% of supply)</li>
             </ul>
 
             <CodeBlock title="Clanker v4 Factory">
-{`// Simplified deployment flow
+{`// Simplified deployment flow (via clanker-sdk v4)
 ClankerFactory.deployToken({
   name: "Token Name",
   symbol: "TICKER",
   image: "ipfs://...",
-  // Automatic configuration:
-  // → 10% supply vested for profile owner
-  // → Fee locker splits: 80% profile / 20% platform
-  // → Uniswap V3 pool with full-range liquidity
+  pool: { pairedToken: "WETH" },
+  fees: { type: "static", clankerFee: 125, pairedFee: 125 },
+  rewards: {
+    recipients: [
+      { bps: 8000, token: "Paired" }, // 80% → profile owner
+      { bps: 2000, token: "Paired" }, // 20% → platform
+    ],
+  },
+  vault: {
+    percentage: 10,           // 10% of supply
+    lockupDuration: 2592000,  // 30-day lockup
+    vestingDuration: 2592000, // 30-day linear vest
+  },
 })`}
             </CodeBlock>
 
             {/* Liquidity Pool */}
             <SubHeading id="liquidity-pool">Liquidity Pool</SubHeading>
             <Paragraph>
-              Every token launched through pip gets a Uniswap V3 liquidity pool paired with WETH
-              (Wrapped Ether on Base). The pool is configured with full-range liquidity, meaning
-              the token is tradeable across all price ranges from the moment of deployment.
+              Every token launched through pip gets a Uniswap V4 pool paired with WETH
+              (Wrapped Ether on Base). Uniswap V4 uses a singleton PoolManager contract
+              rather than deploying individual pool contracts, which improves gas efficiency
+              and enables hooks for custom pool behavior.
             </Paragraph>
             <Paragraph>
-              The liquidity position is locked in the Clanker Fee Locker contract — it cannot be
+              The liquidity position is locked in the Clanker Locker contract — it cannot be
               removed or rug-pulled. This is a core safety guarantee of the Clanker v4 protocol.
-              Trading fees from the pool are the primary revenue mechanism for both the profile
-              owner and the platform.
+              Swap fees from the pool are distributed to reward recipients (the profile owner
+              and the platform) via the fee locker.
             </Paragraph>
 
             <Callout type="tip" title="Locked liquidity">
-              All liquidity is permanently locked in the fee locker contract. Neither the launcher
-              nor the profile owner can remove liquidity — only collect trading fees.
+              All liquidity is permanently locked in the Clanker Locker contract. Neither the launcher
+              nor the profile owner can remove liquidity — only collect reward distributions.
             </Callout>
 
             <Separator className="my-[var(--space-4)]" />
@@ -415,8 +426,9 @@ ClankerFactory.deployToken({
             {/* 80/20 Fee Split */}
             <SubHeading id="fee-split">80/20 Fee Split</SubHeading>
             <Paragraph>
-              Every trade on the Uniswap V3 pool generates a fee (the standard Uniswap trading fee).
-              This fee is split between two parties:
+              Each pool is configured with a static fee of 125 bps (1.25%) on both the token
+              and WETH side. Fees generated from trading are distributed between two reward
+              recipients:
             </Paragraph>
 
             <div className="grid gap-[var(--space-3)] sm:gap-[var(--space-4)] sm:grid-cols-2">
@@ -458,14 +470,14 @@ ClankerFactory.deployToken({
             {/* Fee Collection */}
             <SubHeading id="fee-collection">Fee Collection</SubHeading>
             <Paragraph>
-              Fees accumulate in the Clanker Fee Locker contract as the token is traded. The fee locker
-              holds the Uniswap V3 liquidity position and collects swap fees automatically. Neither party
-              needs to do anything for fees to accumulate — they accrue with every trade.
+              Fees accumulate in the Clanker Fee Locker contract as the token is traded. The locker
+              holds the locked Uniswap V4 liquidity position and collects swap fees automatically.
+              Neither party needs to do anything for fees to accumulate — they accrue with every trade.
             </Paragraph>
             <Paragraph>
-              The fee locker contract keeps a running tally of unclaimed fees for both the profile owner
-              (80%) and the platform (20%). Fees are denominated in the pool&apos;s underlying assets — typically
-              a mix of the token itself and WETH.
+              The fee locker tracks unclaimed rewards for both the profile owner (80%) and the
+              platform (20%). Rewards are configured as &ldquo;Paired&rdquo; token type, meaning fees are
+              denominated in WETH (the paired token in the pool).
             </Paragraph>
 
             {/* Claiming Fees */}
@@ -544,6 +556,14 @@ ClankerFactory.deployToken({
                     <td className="px-[var(--space-4)] py-[var(--space-3)]">X profile owner (claimable after verification)</td>
                   </tr>
                   <tr className="border-b border-[var(--border-default)]">
+                    <td className="px-[var(--space-4)] py-[var(--space-3)]">Lockup Period</td>
+                    <td className="px-[var(--space-4)] py-[var(--space-3)]">30 days (tokens fully locked)</td>
+                  </tr>
+                  <tr className="border-b border-[var(--border-default)]">
+                    <td className="px-[var(--space-4)] py-[var(--space-3)]">Vesting Period</td>
+                    <td className="px-[var(--space-4)] py-[var(--space-3)]">30 days (linear unlock after lockup)</td>
+                  </tr>
+                  <tr className="border-b border-[var(--border-default)]">
                     <td className="px-[var(--space-4)] py-[var(--space-3)]">Vesting Contract</td>
                     <td className="px-[var(--space-4)] py-[var(--space-3)]">
                       <InlineCode>ClankerVault</InlineCode>
@@ -551,7 +571,7 @@ ClankerFactory.deployToken({
                   </tr>
                   <tr>
                     <td className="px-[var(--space-4)] py-[var(--space-3)]">Release</td>
-                    <td className="px-[var(--space-4)] py-[var(--space-3)]">Linear vesting over the vesting period</td>
+                    <td className="px-[var(--space-4)] py-[var(--space-3)]">Linear vesting over the 30-day vesting period</td>
                   </tr>
                 </tbody>
               </table>
@@ -561,8 +581,9 @@ ClankerFactory.deployToken({
               {[
                 { label: "Vested Amount", value: "10% of total token supply" },
                 { label: "Recipient", value: "X profile owner (claimable after verification)" },
+                { label: "Lockup Period", value: "30 days (tokens fully locked)" },
+                { label: "Vesting Period", value: "30 days (linear unlock after lockup)" },
                 { label: "Vesting Contract", value: "ClankerVault" },
-                { label: "Release", value: "Linear vesting over the vesting period" },
               ].map((row) => (
                 <div key={row.label} className="rounded-[var(--radius-md)] border border-[var(--border-default)] bg-[var(--bg-raised)] p-[var(--space-3)]">
                   <Text variant="caption" color="subtle" className="mb-[var(--space-1)]">{row.label}</Text>
@@ -582,13 +603,13 @@ ClankerFactory.deployToken({
             <CodeBlock title="Vesting timeline">
 {`Token Launch
   │
-  ├─── Lockup Period ───┤─── Linear Vesting ───────────┤
-  │    (tokens locked)   │   (tokens unlock gradually)   │
-  │                      │                               │
-  t=0               lockupEnd                      vestingEnd
-                         │                               │
-                    First claim                    Fully vested
-                    available                      (all 10%)`}
+  ├──── 30-day Lockup ────┤──── 30-day Linear Vesting ────┤
+  │     (tokens locked)    │    (tokens unlock gradually)   │
+  │                        │                                │
+  t=0                  Day 30                            Day 60
+                           │                                │
+                      First claim                     Fully vested
+                      available                       (all 10%)`}
             </CodeBlock>
 
             <Paragraph>
@@ -600,9 +621,11 @@ ClankerFactory.deployToken({
             {/* Claiming Vested Tokens */}
             <SubHeading id="claiming-vested-tokens">Claiming Vested Tokens</SubHeading>
             <Paragraph>
-              To claim vested tokens, the profile owner must first verify their X account on pip.
-              Once verified, pip transfers the admin role of the vesting allocation to the profile
-              owner&apos;s wallet, enabling them to claim directly from the Clanker Vault.
+              To claim vested tokens and fees, the profile owner must first verify their X account
+              on pip. Once verified, pip performs two on-chain transactions: it transfers the reward
+              recipient (for the 80% fee share) to the profile owner&apos;s wallet, and transfers the
+              vault allocation admin to their wallet — enabling them to claim both fees and vested
+              tokens directly.
             </Paragraph>
 
             <StepList
@@ -612,14 +635,14 @@ ClankerFactory.deployToken({
                   description: "Sign in with the X account the token was created for.",
                 },
                 {
-                  title: "Admin transfer",
+                  title: "On-chain transfers",
                   description:
-                    "pip calls editAllocationAdmin on the ClankerVault to transfer claim rights to your wallet.",
+                    "pip calls updateRewardRecipient to redirect the 80% fee share to your wallet, and editAllocationAdmin on the ClankerVault to transfer vesting claim rights.",
                 },
                 {
-                  title: "Claim tokens",
+                  title: "Claim tokens & fees",
                   description:
-                    "Call the claim function (via the dashboard) to receive your currently vested tokens.",
+                    "Claim your vested tokens and accumulated trading fees via the dashboard. Both are sent directly to your connected wallet.",
                 },
               ]}
             />
@@ -811,27 +834,35 @@ a larger share of the ecosystem`}
             {/* Clanker v4 */}
             <SubHeading id="clanker-v4">Clanker v4 Protocol</SubHeading>
             <Paragraph>
-              Clanker v4 is the latest version of the Clanker token deployment protocol. It provides
-              a factory pattern for creating ERC-20 tokens with built-in Uniswap V3 liquidity and
-              fee distribution. Key improvements in v4 include:
+              Clanker v4 is the latest version of the Clanker token deployment protocol. It builds
+              on Uniswap V4&apos;s singleton PoolManager and hooks architecture to provide a factory
+              pattern for creating ERC-20 tokens with built-in liquidity, fee distribution, and
+              token vesting. Key features include:
             </Paragraph>
 
             <ul className="flex flex-col gap-[var(--space-2)] pl-[var(--space-4)] sm:pl-[var(--space-6)] text-[var(--text-xs)] sm:text-[var(--text-sm)] leading-[var(--leading-relaxed)] text-[var(--fg-muted)] list-disc marker:text-[var(--fg-subtle)]">
               <li>
-                <strong className="text-[var(--fg-default)]">Gas efficiency</strong> — Optimized
-                contract bytecode reduces deployment costs on Base L2
+                <strong className="text-[var(--fg-default)]">Uniswap V4 native</strong> — Pools are
+                created via the V4 PoolManager singleton with hook support, enabling custom fee
+                logic and MEV protection
+              </li>
+              <li>
+                <strong className="text-[var(--fg-default)]">Static &amp; dynamic fees</strong> — Pools
+                can use static fee configurations (e.g., 125 bps) or dynamic fee hooks that adjust
+                based on market conditions
               </li>
               <li>
                 <strong className="text-[var(--fg-default)]">Built-in vesting</strong> — Native
-                support for token vesting through the ClankerVault contract
+                support for token vesting through the ClankerVault contract with configurable
+                lockup and vesting durations
               </li>
               <li>
-                <strong className="text-[var(--fg-default)]">Fee locker</strong> — Permanent
-                liquidity locking with configurable fee distribution between parties
+                <strong className="text-[var(--fg-default)]">Liquidity locker</strong> — Permanent
+                liquidity locking with configurable reward distribution between multiple recipients
               </li>
               <li>
                 <strong className="text-[var(--fg-default)]">Admin controls</strong> — Transferable
-                allocation admin roles for flexible claim management
+                reward recipient and vault allocation admin roles for flexible claim management
               </li>
             </ul>
 
@@ -975,8 +1006,8 @@ a larger share of the ecosystem`}
                     <Badge variant="primary">Trading Fees</Badge>
                     <Text variant="h4">80% of fees</Text>
                     <Text variant="body-sm">
-                      You receive 80% of all Uniswap trading fees generated by your token.
-                      These accumulate automatically and can be claimed anytime.
+                      You receive 80% of all swap fees generated by your token&apos;s pool,
+                      paid in WETH. These accumulate automatically and can be claimed anytime.
                     </Text>
                   </VStack>
                 </CardContent>
@@ -1024,7 +1055,7 @@ a larger share of the ecosystem`}
             <ul className="flex flex-col gap-[var(--space-2)] pl-[var(--space-4)] sm:pl-[var(--space-6)] text-[var(--text-xs)] sm:text-[var(--text-sm)] leading-[var(--leading-relaxed)] text-[var(--fg-muted)] list-disc marker:text-[var(--fg-subtle)]">
               <li>Fees accumulate in real-time with every trade</li>
               <li>No minimum claim amount — claim any amount at any time</li>
-              <li>Fees are paid in the pool&apos;s underlying assets (token + WETH)</li>
+              <li>Fees are paid in WETH (the paired token in the pool)</li>
               <li>Claiming requires a small gas fee on Base (typically fractions of a cent)</li>
               <li>Unclaimed fees remain safely in the fee locker contract indefinitely</li>
             </ul>
@@ -1050,7 +1081,7 @@ a larger share of the ecosystem`}
                 },
                 {
                   q: "Can the liquidity be removed (rug pull)?",
-                  a: "No. All liquidity is permanently locked in the Clanker Fee Locker contract. Neither the token launcher, the profile owner, nor the platform can remove liquidity. Only trading fees can be collected.",
+                  a: "No. All liquidity is permanently locked in the Clanker Locker contract. Neither the token launcher, the profile owner, nor the platform can remove liquidity. Only reward distributions (trading fees) can be claimed.",
                 },
                 {
                   q: "What chain do I need to be on?",
