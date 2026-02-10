@@ -41,7 +41,7 @@ export async function deployToken(params: DeployTokenParams) {
     },
     fees: {
       type: "static",
-      clankerFee: 125,
+      clankerFee: 0,
       pairedFee: 125,
     },
     rewards: {
