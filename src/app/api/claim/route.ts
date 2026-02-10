@@ -4,7 +4,6 @@ import { getAuthenticatedUser } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { users, launches } from "@/lib/db/schema";
 import { eq, and } from "drizzle-orm";
-import { updateRewardRecipient, updateVaultBeneficiary } from "@/lib/clanker";
 
 const claimSchema = z.object({
   launchId: z.string().uuid(),
@@ -13,6 +12,14 @@ const claimSchema = z.object({
     .regex(/^0x[a-fA-F0-9]{40}$/, "Invalid Ethereum address"),
 });
 
+/**
+ * Claim a token launch.
+ *
+ * With the Doppler rehype pool, beneficiaries are set at pool creation time
+ * and cannot be changed on-chain. Claiming records the creator's wallet in
+ * the database so the admin wallet can distribute their share of accumulated
+ * fees and vested tokens off-chain.
+ */
 export async function POST(req: NextRequest) {
   const privyUser = await getAuthenticatedUser(req);
   if (!privyUser) {
@@ -93,60 +100,10 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  if (!launch.tokenAddress) {
-    return NextResponse.json(
-      { error: "Token address not available" },
-      { status: 400 }
-    );
-  }
+  // With Doppler rehype pools, beneficiaries are immutable on-chain.
+  // The admin wallet collects the creator's share and distributes it
+  // based on the claim record in the database. No on-chain transactions
+  // are needed during the claim process.
 
-  const claimerWallet = body.walletAddress as `0x${string}`;
-  const tokenAddr = launch.tokenAddress as `0x${string}`;
-
-  try {
-    // On-chain tx 1: Update reward recipient (slot 0 = 80% fees)
-    const { txHash: claimTxHash } = await updateRewardRecipient(
-      tokenAddr,
-      0n,
-      claimerWallet
-    );
-
-    // On-chain tx 2: Update vault beneficiary
-    const { txHash: vaultClaimTxHash } = await updateVaultBeneficiary(
-      tokenAddr,
-      claimerWallet
-    );
-
-    // Update DB with tx hashes
-    const [updated] = await db
-      .update(launches)
-      .set({
-        claimTxHash,
-        vaultClaimTxHash,
-      })
-      .where(eq(launches.id, launch.id))
-      .returning();
-
-    return NextResponse.json({ launch: updated });
-  } catch (error) {
-    // Revert the claim in DB on failure
-    await db
-      .update(launches)
-      .set({
-        claimed: false,
-        claimedByUserId: null,
-        claimedAt: null,
-        claimerWalletAddress: null,
-      })
-      .where(eq(launches.id, launch.id));
-
-    console.error("Claim on-chain tx failed:", error);
-    return NextResponse.json(
-      {
-        error: "On-chain claim transaction failed",
-        details: error instanceof Error ? error.message : "Unknown error",
-      },
-      { status: 500 }
-    );
-  }
+  return NextResponse.json({ launch });
 }

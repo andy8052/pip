@@ -243,7 +243,7 @@ const STEPS = [
     number: "03",
     title: "Launch & earn",
     description:
-      "Deploy on Base via Clanker v4. 10% of the token supply is reserved for the X account and vested. The profile owner also claims 80% of trading fees.",
+      "Deploy on Base via Doppler. 10% of the token supply is reserved for the X account and vested. The profile owner receives the majority of trading fees.",
     icon: IconCoins,
   },
 ] as const;
@@ -257,9 +257,9 @@ const FEATURES = [
   },
   {
     icon: IconTrendingUp,
-    title: "80% fee sharing",
+    title: "Creator fee sharing",
     description:
-      "Profile owners claim the majority of trading fees. Fair economics that reward the people tokens are created for.",
+      "Profile owners receive the majority of trading fees. Fair economics that reward the people tokens are created for.",
   },
   {
     icon: IconCoins,
@@ -269,9 +269,9 @@ const FEATURES = [
   },
   {
     icon: IconShield,
-    title: "Built on Clanker v4",
+    title: "Built on Doppler",
     description:
-      "The latest version of the Clanker protocol with improved security, gas efficiency, and vesting mechanics.",
+      "Powered by the Doppler protocol with rehype pools, advanced fee distribution, and built-in vesting mechanics.",
   },
   {
     icon: IconFlame,
@@ -309,7 +309,7 @@ export default function LandingPage() {
         <Container className="relative pt-[var(--space-16)] pb-[var(--space-16)] sm:pt-[var(--space-24)] sm:pb-[var(--space-24)]">
           <VStack align="center" gap="lg" className="text-center">
             <Badge variant="primary" className="text-[var(--text-xs)]">
-              Powered by Clanker v4 on Base
+              Powered by Doppler on Base
             </Badge>
 
             <VStack align="center" gap="md" className="max-w-3xl">
@@ -331,7 +331,7 @@ export default function LandingPage() {
               >
                 Create a token for anyone on X in seconds. 10% of the token
                 supply is reserved for the X account and vested — plus they
-                claim 80% of trading fees. No sign-up required.
+                receive the majority of trading fees. No sign-up required.
               </Text>
             </VStack>
 
@@ -413,7 +413,7 @@ export default function LandingPage() {
                           variant="body-sm"
                           className="font-[var(--font-medium)] text-[var(--status-success)]"
                         >
-                          80%
+                          90%
                         </Text>
                       </VStack>
                       <VStack gap="none" align="center">
@@ -597,7 +597,7 @@ export default function LandingPage() {
                     <VStack gap="xs">
                       <Text variant="h4">Fees are collected</Text>
                       <Text variant="body-sm">
-                        The platform earns 20% of trading fees from every token
+                        The platform earns 5% of trading fees from every token
                         launched through pip. These fees accumulate in the
                         platform wallet.
                       </Text>
@@ -725,7 +725,7 @@ export default function LandingPage() {
         <Container className="py-[var(--space-10)] sm:py-[var(--space-12)]">
           <div className="grid grid-cols-2 gap-[var(--space-8)] sm:grid-cols-4">
             {[
-              { value: "80%", label: "Fee share for creators" },
+              { value: "90%", label: "Creator share of fees" },
               { value: "10%", label: "Token supply vested" },
               { value: "100%", label: "Platform fees → buy & burn" },
               { value: "$PIPAI", label: "Deflationary platform token" },

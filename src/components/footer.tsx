@@ -84,12 +84,12 @@ export function Footer() {
                 </Text>
                 <VStack gap="xs">
                   <a
-                    href="https://www.clanker.world"
+                    href="https://doppler.lol"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-[var(--text-sm)] text-[var(--fg-muted)] transition-colors duration-150 hover:text-[var(--fg-default)] no-underline"
                   >
-                    Clanker
+                    Doppler
                   </a>
                   <a
                     href="https://base.org"

@@ -20,14 +20,14 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: "pip - Launch tokens for any X profile",
   description:
-    "Launch Clanker v4 tokens on Base for any X profile. 10% of the token is reserved for the X account and vested, plus 80% fee sharing.",
+    "Launch tokens on Base via Doppler for any X profile. 10% of the token is reserved for the X account and vested, plus the creator receives the majority of trading fees.",
   metadataBase: new URL(
     process.env.NEXT_PUBLIC_BASE_URL ?? "http://localhost:3000"
   ),
   openGraph: {
     title: "pip - Launch tokens for any X profile",
     description:
-      "Launch Clanker v4 tokens on Base for any X profile. 10% of the token is reserved for the X account and vested, plus 80% fee sharing.",
+      "Launch tokens on Base via Doppler for any X profile. 10% of the token is reserved for the X account and vested, plus the creator receives the majority of trading fees.",
     siteName: "pip",
     type: "website",
   },
@@ -35,7 +35,7 @@ export const metadata: Metadata = {
     card: "summary",
     title: "pip - Launch tokens for any X profile",
     description:
-      "Launch Clanker v4 tokens on Base for any X profile. 10% of the token is reserved for the X account and vested, plus 80% fee sharing.",
+      "Launch tokens on Base via Doppler for any X profile. 10% of the token is reserved for the X account and vested, plus the creator receives the majority of trading fees.",
   },
 };
 

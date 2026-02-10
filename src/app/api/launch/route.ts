@@ -1,12 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { nanoid } from "nanoid";
 import { getAuthenticatedUser } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { users, launches } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 import { checkRateLimit } from "@/lib/rate-limit";
-import { deployToken } from "@/lib/clanker";
+import { deployToken } from "@/lib/doppler";
 
 const launchSchema = z.object({
   targetTwitterUsername: z
@@ -70,8 +69,6 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const requestKey = nanoid(24);
-
   // Insert pending launch
   const [launch] = await db
     .insert(launches)
@@ -83,7 +80,6 @@ export async function POST(req: NextRequest) {
       tokenName: body.tokenName,
       tokenSymbol: body.tokenSymbol,
       tokenImageUrl: body.tokenImageUrl,
-      clankerRequestKey: requestKey,
       status: "pending",
     })
     .returning();
@@ -95,11 +91,10 @@ export async function POST(req: NextRequest) {
     .where(eq(launches.id, launch.id));
 
   try {
-    const { txHash, tokenAddress } = await deployToken({
+    const { txHash, tokenAddress, poolId } = await deployToken({
       name: body.tokenName,
       symbol: body.tokenSymbol,
       imageUrl: body.tokenImageUrl,
-      requestKey,
     });
 
     // Update with deployment results
@@ -109,6 +104,7 @@ export async function POST(req: NextRequest) {
         status: "deployed",
         tokenAddress,
         deployTxHash: txHash,
+        poolId,
       })
       .where(eq(launches.id, launch.id))
       .returning();
