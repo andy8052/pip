@@ -91,11 +91,12 @@ export async function POST(req: NextRequest) {
     .where(eq(launches.id, launch.id));
 
   try {
-    const { txHash, tokenAddress, poolId } = await deployToken({
-      name: body.tokenName,
-      symbol: body.tokenSymbol,
-      imageUrl: body.tokenImageUrl,
-    });
+    const { txHash, tokenAddress, poolId, feeRouterAddress } =
+      await deployToken({
+        name: body.tokenName,
+        symbol: body.tokenSymbol,
+        imageUrl: body.tokenImageUrl,
+      });
 
     // Update with deployment results
     const [deployed] = await db
@@ -105,6 +106,7 @@ export async function POST(req: NextRequest) {
         tokenAddress,
         deployTxHash: txHash,
         poolId,
+        feeRouterAddress,
       })
       .where(eq(launches.id, launch.id))
       .returning();

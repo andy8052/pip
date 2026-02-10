@@ -34,6 +34,8 @@ export const launches = pgTable("launches", {
   deployTxHash: text("deploy_tx_hash"),
   /** Doppler V4 pool identifier (bytes32 hex) */
   poolId: text("pool_id"),
+  /** Address of the BeneficiaryFeeRouter contract for this launch */
+  feeRouterAddress: text("fee_router_address"),
   status: varchar("status", { length: 32 }).notNull().default("pending"),
   claimed: boolean("claimed").notNull().default(false),
   claimedByUserId: uuid("claimed_by_user_id").references(() => users.id),

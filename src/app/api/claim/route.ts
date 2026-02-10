@@ -4,6 +4,8 @@ import { getAuthenticatedUser } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { users, launches } from "@/lib/db/schema";
 import { eq, and } from "drizzle-orm";
+import { setFeeRouterRecipient } from "@/lib/fee-router";
+import type { Address } from "viem";
 
 const claimSchema = z.object({
   launchId: z.string().uuid(),
@@ -15,10 +17,11 @@ const claimSchema = z.object({
 /**
  * Claim a token launch.
  *
- * With the Doppler rehype pool, beneficiaries are set at pool creation time
- * and cannot be changed on-chain. Claiming records the creator's wallet in
- * the database so the admin wallet can distribute their share of accumulated
- * fees and vested tokens off-chain.
+ * Each Doppler pool has a BeneficiaryFeeRouter contract set as the creator's
+ * on-chain beneficiary. When the creator claims, we:
+ *   1. Record their wallet in the database.
+ *   2. Call `setRecipient` on the fee router so accumulated (and future)
+ *      fees are forwarded to the creator's wallet.
  */
 export async function POST(req: NextRequest) {
   const privyUser = await getAuthenticatedUser(req);
@@ -100,10 +103,24 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  // With Doppler rehype pools, beneficiaries are immutable on-chain.
-  // The admin wallet collects the creator's share and distributes it
-  // based on the claim record in the database. No on-chain transactions
-  // are needed during the claim process.
+  // Point the fee router at the creator's wallet so future fee forwards
+  // go directly to them. If the launch was created before fee routers were
+  // introduced (no feeRouterAddress), we skip this step gracefully.
+  if (launch.feeRouterAddress) {
+    try {
+      await setFeeRouterRecipient(
+        launch.feeRouterAddress as Address,
+        body.walletAddress as Address
+      );
+    } catch (error) {
+      // Log but don't fail the claim — the DB record is already updated
+      // and the admin can manually set the recipient later.
+      console.error(
+        `Failed to set fee router recipient for ${launch.feeRouterAddress}:`,
+        error
+      );
+    }
+  }
 
   return NextResponse.json({ launch });
 }
