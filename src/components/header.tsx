@@ -28,6 +28,9 @@ export function Header() {
                 <AppLink href="/launch" variant="nav">
                   Launch
                 </AppLink>
+                <AppLink href="/docs" variant="nav">
+                  Docs
+                </AppLink>
                 {authenticated && (
                   <AppLink href="/dashboard" variant="nav">
                     Dashboard

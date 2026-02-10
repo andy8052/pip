@@ -45,6 +45,12 @@ export function Footer() {
                   >
                     Dashboard
                   </Link>
+                  <Link
+                    href="/docs"
+                    className="text-[var(--text-sm)] text-[var(--fg-muted)] transition-colors duration-150 hover:text-[var(--fg-default)] no-underline"
+                  >
+                    Documentation
+                  </Link>
                 </VStack>
               </VStack>
 
