@@ -17,7 +17,7 @@ export default function DashboardPage() {
           <Text variant="h1">Your Dashboard</Text>
           <Text variant="body-sm">
             Tokens launched for your X profile appear here. Claim them to receive
-            80% of trading fees and vesting tokens.
+            the majority of trading fees and vested tokens.
           </Text>
         </VStack>
         <Suspense

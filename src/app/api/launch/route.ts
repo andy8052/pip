@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { z } from "zod";
+import { z, ZodError } from "zod";
 import { getAuthenticatedUser } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { users, launches } from "@/lib/db/schema";
@@ -54,8 +54,12 @@ export async function POST(req: NextRequest) {
   try {
     body = launchSchema.parse(await req.json());
   } catch (e) {
+    const messages =
+      e instanceof ZodError
+        ? e.issues.map((i) => `${i.path.join(".")}: ${i.message}`)
+        : ["Invalid input"];
     return NextResponse.json(
-      { error: "Invalid input", details: e },
+      { error: "Invalid input", details: messages },
       { status: 400 }
     );
   }
