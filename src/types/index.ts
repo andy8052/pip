@@ -11,6 +11,8 @@ export interface TokenLaunch {
   deployTxHash: string | null;
   /** Doppler V4 pool identifier (bytes32 hex) */
   poolId: string | null;
+  /** Address of the BeneficiaryFeeRouter contract for this launch */
+  feeRouterAddress: string | null;
   status: "pending" | "deploying" | "deployed" | "failed";
   claimed: boolean;
   claimedByUserId: string | null;

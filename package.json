@@ -10,7 +10,8 @@
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
     "db:push": "drizzle-kit push",
-    "db:studio": "drizzle-kit studio"
+    "db:studio": "drizzle-kit studio",
+    "contracts:compile": "node contracts/compile.cjs"
   },
   "dependencies": {
     "@privy-io/react-auth": "^3.13.1",
@@ -36,6 +37,7 @@
     "drizzle-kit": "^0.31.8",
     "eslint": "^9",
     "eslint-config-next": "16.1.6",
+    "solc": "^0.8.28",
     "tailwindcss": "^4",
     "typescript": "^5"
   }

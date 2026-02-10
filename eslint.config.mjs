@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Solidity build tooling (CJS scripts)
+    "contracts/**",
   ]),
 ]);
 

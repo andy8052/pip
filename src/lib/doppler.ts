@@ -10,6 +10,7 @@ import {
   getPublicClient,
   getAdminAddress,
 } from "./admin-wallet";
+import { deployFeeRouter } from "./fee-router";
 
 // ── SDK Helpers ──────────────────────────────────────────────────────────────
 
@@ -89,14 +90,17 @@ const NUMERAIRE_BUYBACK_PERCENT_WAD = 0n;
 /**
  * Beneficiary shares (how the 90% beneficiary pool is distributed):
  *  - 5%  → Doppler protocol (airlock owner) — minimum required
- *  - 5%  → Pip (admin wallet)
- *  - 90% → Creator (admin wallet initially, distributed off-chain after claim)
+ *  - 5%  → Pip platform (admin wallet)
+ *  - 90% → Creator (BeneficiaryFeeRouter — routes to creator wallet on claim)
  *
- * Since Pip and Creator share initially go to the same admin wallet,
- * we combine them: airlock owner = 5%, admin wallet = 95%.
+ * The creator's share goes to a dedicated BeneficiaryFeeRouter contract.
+ * Because Doppler beneficiaries are immutable, the router acts as a mutable
+ * intermediary — once the creator claims, the admin sets the router's
+ * recipient to the creator's wallet, and fees are forwarded on demand.
  */
 const PROTOCOL_SHARE_WAD = (WAD * 5n) / 100n; // 5%
-const ADMIN_SHARE_WAD = (WAD * 95n) / 100n; // 95% (5% pip + 90% creator)
+const PIP_SHARE_WAD = (WAD * 5n) / 100n; // 5%
+const CREATOR_SHARE_WAD = (WAD * 90n) / 100n; // 90%
 
 // ── Deploy ───────────────────────────────────────────────────────────────────
 
@@ -110,6 +114,8 @@ export interface DeployTokenResult {
   tokenAddress: string;
   poolId: string;
   txHash: string;
+  /** Address of the BeneficiaryFeeRouter that receives the creator's share */
+  feeRouterAddress: string;
 }
 
 export async function deployToken(
@@ -139,10 +145,19 @@ export async function deployToken(
   if (!noOpMigratorAddress)
     throw new Error("NoOpMigrator address not available for Base.");
 
-  // Beneficiaries for fee streaming
+  // Deploy a BeneficiaryFeeRouter contract that will receive the creator's
+  // 90% share of fees. The router is owned by the admin wallet so we can
+  // later set the recipient to the creator's actual wallet when they claim.
+  const { routerAddress: feeRouterAddress } = await deployFeeRouter();
+
+  // Beneficiaries for fee streaming.
+  // The creator's share goes to the fee router (not directly to the admin).
+  // This means fees accumulate in the router contract and can be forwarded
+  // to the creator's wallet once they claim.
   const beneficiaries = [
     { beneficiary: airlockOwner, shares: PROTOCOL_SHARE_WAD }, // 5% protocol
-    { beneficiary: adminAddress, shares: ADMIN_SHARE_WAD }, // 95% admin (5% pip + 90% creator)
+    { beneficiary: adminAddress, shares: PIP_SHARE_WAD }, // 5% Pip platform
+    { beneficiary: feeRouterAddress, shares: CREATOR_SHARE_WAD }, // 90% → router → creator
   ];
 
   // Build the multicurve auction with RehypeDopplerHook
@@ -191,6 +206,7 @@ export async function deployToken(
     tokenAddress: result.tokenAddress,
     poolId: result.poolId,
     txHash: result.transactionHash,
+    feeRouterAddress,
   };
 }
 
