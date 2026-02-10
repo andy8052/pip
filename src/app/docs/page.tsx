@@ -113,7 +113,7 @@ function SectionHeading({ id, children }: { id: string; children: React.ReactNod
   return (
     <h2
       id={id}
-      className="scroll-mt-24 text-[var(--text-2xl)] font-[var(--font-bold)] leading-[var(--leading-tight)] tracking-[var(--tracking-tight)] text-[var(--fg-default)] pt-[var(--space-12)] first:pt-0"
+      className="scroll-mt-20 text-[var(--text-xl)] sm:text-[var(--text-2xl)] font-[var(--font-bold)] leading-[var(--leading-tight)] tracking-[var(--tracking-tight)] text-[var(--fg-default)] pt-[var(--space-8)] sm:pt-[var(--space-12)] first:pt-0"
     >
       {children}
     </h2>
@@ -124,7 +124,7 @@ function SubHeading({ id, children }: { id: string; children: React.ReactNode })
   return (
     <h3
       id={id}
-      className="scroll-mt-24 text-[var(--text-xl)] font-[var(--font-semibold)] leading-[var(--leading-snug)] text-[var(--fg-default)] pt-[var(--space-8)]"
+      className="scroll-mt-20 text-[var(--text-lg)] sm:text-[var(--text-xl)] font-[var(--font-semibold)] leading-[var(--leading-snug)] text-[var(--fg-default)] pt-[var(--space-6)] sm:pt-[var(--space-8)]"
     >
       {children}
     </h3>
@@ -133,7 +133,7 @@ function SubHeading({ id, children }: { id: string; children: React.ReactNode })
 
 function Paragraph({ children }: { children: React.ReactNode }) {
   return (
-    <p className="text-[var(--text-base)] font-[var(--font-normal)] leading-[var(--leading-relaxed)] text-[var(--fg-muted)] max-w-prose">
+    <p className="text-[var(--text-sm)] sm:text-[var(--text-base)] font-[var(--font-normal)] leading-[var(--leading-relaxed)] text-[var(--fg-muted)]">
       {children}
     </p>
   );
@@ -141,7 +141,7 @@ function Paragraph({ children }: { children: React.ReactNode }) {
 
 function InlineCode({ children }: { children: React.ReactNode }) {
   return (
-    <code className="rounded-[var(--radius-sm)] bg-[var(--bg-overlay)] px-[var(--space-1-5)] py-[var(--space-0-5)] font-[var(--font-family-mono)] text-[0.875em] text-[var(--fg-default)]">
+    <code className="rounded-[var(--radius-sm)] bg-[var(--bg-overlay)] px-[var(--space-1-5)] py-[var(--space-0-5)] font-[var(--font-family-mono)] text-[0.85em] text-[var(--fg-default)] break-words">
       {children}
     </code>
   );
@@ -149,7 +149,7 @@ function InlineCode({ children }: { children: React.ReactNode }) {
 
 function CodeBlock({ children, title }: { children: string; title?: string }) {
   return (
-    <div className="overflow-hidden rounded-[var(--radius-lg)] border border-[var(--border-default)] bg-[var(--bg-raised)]">
+    <div className="-mx-[var(--space-4)] sm:mx-0 overflow-hidden sm:rounded-[var(--radius-lg)] border-y sm:border border-[var(--border-default)] bg-[var(--bg-raised)]">
       {title && (
         <div className="border-b border-[var(--border-default)] bg-[var(--bg-subtle)] px-[var(--space-4)] py-[var(--space-2)]">
           <span className="font-[var(--font-family-mono)] text-[var(--text-xs)] text-[var(--fg-subtle)]">
@@ -157,8 +157,8 @@ function CodeBlock({ children, title }: { children: string; title?: string }) {
           </span>
         </div>
       )}
-      <pre className="overflow-x-auto p-[var(--space-4)]">
-        <code className="font-[var(--font-family-mono)] text-[var(--text-sm)] leading-[var(--leading-relaxed)] text-[var(--fg-muted)]">
+      <pre className="overflow-x-auto p-[var(--space-3)] sm:p-[var(--space-4)]">
+        <code className="font-[var(--font-family-mono)] text-[var(--text-xs)] sm:text-[var(--text-sm)] leading-[var(--leading-relaxed)] text-[var(--fg-muted)]">
           {children}
         </code>
       </pre>
@@ -190,16 +190,16 @@ function Callout({ type = "info", title, children }: { type?: "info" | "warning"
   const s = styles[type];
 
   return (
-    <div className={`rounded-[var(--radius-lg)] border ${s.border} ${s.bg} p-[var(--space-4)]`}>
+    <div className={`rounded-[var(--radius-lg)] border ${s.border} ${s.bg} p-[var(--space-3)] sm:p-[var(--space-4)]`}>
       {title && (
         <div className={`mb-[var(--space-2)] flex items-center gap-[var(--space-2)] font-[var(--font-semibold)] text-[var(--text-sm)] ${s.accent}`}>
-          <span className="flex size-5 items-center justify-center rounded-full bg-current/10 text-[0.7rem] font-[var(--font-bold)]">
+          <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-current/10 text-[0.7rem] font-[var(--font-bold)]">
             {s.icon}
           </span>
           {title}
         </div>
       )}
-      <div className="text-[var(--text-sm)] leading-[var(--leading-relaxed)] text-[var(--fg-muted)]">
+      <div className="text-[var(--text-xs)] sm:text-[var(--text-sm)] leading-[var(--leading-relaxed)] text-[var(--fg-muted)]">
         {children}
       </div>
     </div>
@@ -208,17 +208,17 @@ function Callout({ type = "info", title, children }: { type?: "info" | "warning"
 
 function StepList({ steps }: { steps: { title: string; description: string }[] }) {
   return (
-    <div className="flex flex-col gap-[var(--space-4)]">
+    <div className="flex flex-col gap-[var(--space-3)] sm:gap-[var(--space-4)]">
       {steps.map((step, i) => (
-        <div key={i} className="flex gap-[var(--space-4)]">
-          <div className="flex size-8 shrink-0 items-center justify-center rounded-full bg-[var(--accent-subtle)] font-[var(--font-family-mono)] text-[var(--text-sm)] font-[var(--font-bold)] text-[var(--accent-default)]">
+        <div key={i} className="flex gap-[var(--space-3)] sm:gap-[var(--space-4)]">
+          <div className="flex size-7 sm:size-8 shrink-0 items-center justify-center rounded-full bg-[var(--accent-subtle)] font-[var(--font-family-mono)] text-[var(--text-xs)] sm:text-[var(--text-sm)] font-[var(--font-bold)] text-[var(--accent-default)]">
             {i + 1}
           </div>
-          <div className="flex flex-col gap-[var(--space-1)] pt-[var(--space-1)]">
+          <div className="flex min-w-0 flex-col gap-[var(--space-1)] pt-[var(--space-0-5)] sm:pt-[var(--space-1)]">
             <span className="text-[var(--text-sm)] font-[var(--font-semibold)] text-[var(--fg-default)]">
               {step.title}
             </span>
-            <span className="text-[var(--text-sm)] leading-[var(--leading-relaxed)] text-[var(--fg-muted)]">
+            <span className="text-[var(--text-xs)] sm:text-[var(--text-sm)] leading-[var(--leading-relaxed)] text-[var(--fg-muted)]">
               {step.description}
             </span>
           </div>
@@ -227,6 +227,7 @@ function StepList({ steps }: { steps: { title: string; description: string }[] }
     </div>
   );
 }
+
 
 /* ─────────────────────────────────────────────────────────────────────────────
  * PAGE
@@ -238,20 +239,17 @@ export default function DocsPage() {
       {/* Sidebar */}
       <DocsSidebar sections={[...SECTIONS]} />
 
-      {/* Content */}
-      <div className="flex-1 lg:pl-72">
-        <div className="mx-auto max-w-3xl px-[var(--space-4)] py-[var(--space-8)] sm:px-[var(--space-8)] sm:py-[var(--space-12)] lg:py-[var(--space-16)]">
-          <article className="flex flex-col gap-[var(--space-6)]">
+      {/* Content — full-width on mobile, offset by sidebar on desktop */}
+      <div className="w-full min-w-0 lg:pl-72">
+        <div className="mx-auto max-w-3xl px-[var(--space-4)] py-[var(--space-6)] sm:px-[var(--space-8)] sm:py-[var(--space-12)] lg:py-[var(--space-16)]">
+          <article className="flex flex-col gap-[var(--space-4)] sm:gap-[var(--space-6)]">
 
             {/* ── INTRODUCTION ──────────────────────────────────────────── */}
-            <div className="flex flex-col gap-[var(--space-4)]" id="introduction">
+            <div className="flex flex-col gap-[var(--space-3)] sm:gap-[var(--space-4)]" id="introduction">
               <Badge variant="primary">Documentation</Badge>
-              <Text
-                variant="display"
-                className="bg-gradient-to-b from-[var(--fg-default)] via-[var(--fg-default)] to-[var(--fg-muted)] bg-clip-text text-transparent"
-              >
+              <h1 className="text-[var(--text-2xl)] sm:text-[var(--text-4xl)] font-[var(--font-bold)] leading-[var(--leading-none)] tracking-[var(--tracking-tighter)] bg-gradient-to-b from-[var(--fg-default)] via-[var(--fg-default)] to-[var(--fg-muted)] bg-clip-text text-transparent">
                 pip Platform Docs
-              </Text>
+              </h1>
               <Paragraph>
                 Comprehensive documentation for the pip platform — a permissionless token
                 launcher built on Base using the Clanker v4 protocol. Learn how token creation,
@@ -282,7 +280,7 @@ export default function DocsPage() {
 
             {/* Key Concepts */}
             <SubHeading id="key-concepts">Key Concepts</SubHeading>
-            <div className="grid gap-[var(--space-4)] sm:grid-cols-2">
+            <div className="grid gap-[var(--space-2)] sm:gap-[var(--space-4)] sm:grid-cols-2">
               {[
                 {
                   term: "Token Launcher",
@@ -366,7 +364,7 @@ export default function DocsPage() {
               Each deployment creates:
             </Paragraph>
 
-            <ul className="flex flex-col gap-[var(--space-2)] pl-[var(--space-6)] text-[var(--text-sm)] leading-[var(--leading-relaxed)] text-[var(--fg-muted)] list-disc marker:text-[var(--fg-subtle)]">
+            <ul className="flex flex-col gap-[var(--space-2)] pl-[var(--space-4)] sm:pl-[var(--space-6)] text-[var(--text-xs)] sm:text-[var(--text-sm)] leading-[var(--leading-relaxed)] text-[var(--fg-muted)] list-disc marker:text-[var(--fg-subtle)]">
               <li>A new ERC-20 token contract with the specified name and symbol</li>
               <li>A Uniswap V3 concentrated liquidity pool (token/WETH pair)</li>
               <li>A fee locker position through the Clanker Fee Locker contract</li>
@@ -421,12 +419,12 @@ ClankerFactory.deployToken({
               This fee is split between two parties:
             </Paragraph>
 
-            <div className="grid gap-[var(--space-4)] sm:grid-cols-2">
-              <Card variant="default" padding="lg" className="border-[var(--status-success-border)]">
+            <div className="grid gap-[var(--space-3)] sm:gap-[var(--space-4)] sm:grid-cols-2">
+              <Card variant="default" padding="md" className="border-[var(--status-success-border)] sm:p-[var(--space-6)]">
                 <CardContent>
                   <VStack gap="sm">
-                    <HStack align="center" gap="sm">
-                      <span className="text-[var(--text-3xl)] font-[var(--font-bold)] text-[var(--status-success)]">
+                    <HStack align="center" gap="sm" wrap>
+                      <span className="text-[var(--text-2xl)] sm:text-[var(--text-3xl)] font-[var(--font-bold)] text-[var(--status-success)]">
                         80%
                       </span>
                       <Badge variant="success">Profile Owner</Badge>
@@ -439,11 +437,11 @@ ClankerFactory.deployToken({
                   </VStack>
                 </CardContent>
               </Card>
-              <Card variant="default" padding="lg" className="border-[var(--color-primary-800)]">
+              <Card variant="default" padding="md" className="border-[var(--color-primary-800)] sm:p-[var(--space-6)]">
                 <CardContent>
                   <VStack gap="sm">
-                    <HStack align="center" gap="sm">
-                      <span className="text-[var(--text-3xl)] font-[var(--font-bold)] text-[var(--accent-default)]">
+                    <HStack align="center" gap="sm" wrap>
+                      <span className="text-[var(--text-2xl)] sm:text-[var(--text-3xl)] font-[var(--font-bold)] text-[var(--accent-default)]">
                         20%
                       </span>
                       <Badge variant="primary">Platform</Badge>
@@ -523,7 +521,8 @@ ClankerFactory.deployToken({
               to dump immediately.
             </Paragraph>
 
-            <div className="overflow-hidden rounded-[var(--radius-lg)] border border-[var(--border-default)]">
+            {/* Vesting parameters — stacked cards on mobile, table on sm+ */}
+            <div className="hidden sm:block overflow-hidden rounded-[var(--radius-lg)] border border-[var(--border-default)]">
               <table className="w-full text-[var(--text-sm)]">
                 <thead>
                   <tr className="border-b border-[var(--border-default)] bg-[var(--bg-subtle)]">
@@ -556,6 +555,20 @@ ClankerFactory.deployToken({
                   </tr>
                 </tbody>
               </table>
+            </div>
+            {/* Mobile: stacked key-value layout */}
+            <div className="flex flex-col gap-[var(--space-2)] sm:hidden">
+              {[
+                { label: "Vested Amount", value: "10% of total token supply" },
+                { label: "Recipient", value: "X profile owner (claimable after verification)" },
+                { label: "Vesting Contract", value: "ClankerVault" },
+                { label: "Release", value: "Linear vesting over the vesting period" },
+              ].map((row) => (
+                <div key={row.label} className="rounded-[var(--radius-md)] border border-[var(--border-default)] bg-[var(--bg-raised)] p-[var(--space-3)]">
+                  <Text variant="caption" color="subtle" className="mb-[var(--space-1)]">{row.label}</Text>
+                  <Text variant="body-sm" className="text-[var(--fg-default)]">{row.value}</Text>
+                </div>
+              ))}
             </div>
 
             {/* Vesting Schedule */}
@@ -626,14 +639,14 @@ ClankerFactory.deployToken({
               The buy and burn mechanism is the core economic engine of $PIPAI. Here&apos;s how it works:
             </Paragraph>
 
-            <div className="flex flex-col gap-[var(--space-3)]">
+            <div className="flex flex-col gap-[var(--space-2)] sm:gap-[var(--space-3)]">
               <Card variant="default" padding="md">
                 <CardContent>
-                  <HStack gap="md" align="start">
-                    <div className="flex size-8 shrink-0 items-center justify-center rounded-full bg-[var(--accent-subtle)] font-[var(--font-family-mono)] text-[var(--text-sm)] font-[var(--font-bold)] text-[var(--accent-default)]">
+                  <div className="flex gap-[var(--space-3)] sm:gap-[var(--space-4)]">
+                    <div className="flex size-7 sm:size-8 shrink-0 items-center justify-center rounded-full bg-[var(--accent-subtle)] font-[var(--font-family-mono)] text-[var(--text-xs)] sm:text-[var(--text-sm)] font-[var(--font-bold)] text-[var(--accent-default)]">
                       1
                     </div>
-                    <VStack gap="xs">
+                    <VStack gap="xs" className="min-w-0">
                       <Text variant="label" className="text-[var(--fg-default)]">
                         Fees are collected
                       </Text>
@@ -642,16 +655,16 @@ ClankerFactory.deployToken({
                         These accumulate in the platform&apos;s admin wallet across all deployed tokens.
                       </Text>
                     </VStack>
-                  </HStack>
+                  </div>
                 </CardContent>
               </Card>
               <Card variant="default" padding="md">
                 <CardContent>
-                  <HStack gap="md" align="start">
-                    <div className="flex size-8 shrink-0 items-center justify-center rounded-full bg-[var(--accent-subtle)] font-[var(--font-family-mono)] text-[var(--text-sm)] font-[var(--font-bold)] text-[var(--accent-default)]">
+                  <div className="flex gap-[var(--space-3)] sm:gap-[var(--space-4)]">
+                    <div className="flex size-7 sm:size-8 shrink-0 items-center justify-center rounded-full bg-[var(--accent-subtle)] font-[var(--font-family-mono)] text-[var(--text-xs)] sm:text-[var(--text-sm)] font-[var(--font-bold)] text-[var(--accent-default)]">
                       2
                     </div>
-                    <VStack gap="xs">
+                    <VStack gap="xs" className="min-w-0">
                       <Text variant="label" className="text-[var(--fg-default)]">
                         $PIPAI is purchased
                       </Text>
@@ -660,16 +673,16 @@ ClankerFactory.deployToken({
                         its Uniswap pool. This creates consistent buy pressure.
                       </Text>
                     </VStack>
-                  </HStack>
+                  </div>
                 </CardContent>
               </Card>
               <Card variant="default" padding="md">
                 <CardContent>
-                  <HStack gap="md" align="start">
-                    <div className="flex size-8 shrink-0 items-center justify-center rounded-full bg-[var(--accent-subtle)] font-[var(--font-family-mono)] text-[var(--text-sm)] font-[var(--font-bold)] text-[var(--accent-default)]">
+                  <div className="flex gap-[var(--space-3)] sm:gap-[var(--space-4)]">
+                    <div className="flex size-7 sm:size-8 shrink-0 items-center justify-center rounded-full bg-[var(--accent-subtle)] font-[var(--font-family-mono)] text-[var(--text-xs)] sm:text-[var(--text-sm)] font-[var(--font-bold)] text-[var(--accent-default)]">
                       3
                     </div>
-                    <VStack gap="xs">
+                    <VStack gap="xs" className="min-w-0">
                       <Text variant="label" className="text-[var(--fg-default)]">
                         Tokens are burned
                       </Text>
@@ -678,7 +691,7 @@ ClankerFactory.deployToken({
                         them from circulation. This is verifiable on-chain.
                       </Text>
                     </VStack>
-                  </HStack>
+                  </div>
                 </CardContent>
               </Card>
             </div>
@@ -716,10 +729,27 @@ a larger share of the ecosystem`}
 
             {/* Token Details */}
             <SubHeading id="token-details">Token Details</SubHeading>
-            <Card variant="elevated" padding="lg" className="border-[var(--border-strong)]">
+            <Card variant="elevated" padding="md" className="border-[var(--border-strong)] sm:p-[var(--space-6)]">
               <CardContent>
                 <VStack gap="md">
-                  <div className="overflow-hidden rounded-[var(--radius-lg)] border border-[var(--border-default)]">
+                  {/* Mobile: stacked key-value pairs */}
+                  <div className="flex flex-col gap-[var(--space-2)] sm:hidden">
+                    {[
+                      { label: "Token Name", value: "$PIPAI" },
+                      { label: "Network", value: "Base (Ethereum L2)" },
+                      { label: "Contract", value: CONTRACTS.pipaiToken },
+                      { label: "Mechanism", value: "Deflationary (buy & burn)" },
+                    ].map((row) => (
+                      <div key={row.label} className="flex flex-col gap-[var(--space-0-5)] border-b border-[var(--border-default)] pb-[var(--space-2)] last:border-b-0 last:pb-0">
+                        <span className="text-[var(--text-xs)] text-[var(--fg-subtle)]">{row.label}</span>
+                        <span className="text-[var(--text-sm)] text-[var(--fg-default)] break-all font-[var(--font-family-mono)]">
+                          {row.value}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                  {/* Desktop: table layout */}
+                  <div className="hidden sm:block overflow-hidden rounded-[var(--radius-lg)] border border-[var(--border-default)]">
                     <table className="w-full text-[var(--text-sm)]">
                       <tbody className="text-[var(--fg-muted)]">
                         <tr className="border-b border-[var(--border-default)]">
@@ -786,7 +816,7 @@ a larger share of the ecosystem`}
               fee distribution. Key improvements in v4 include:
             </Paragraph>
 
-            <ul className="flex flex-col gap-[var(--space-2)] pl-[var(--space-6)] text-[var(--text-sm)] leading-[var(--leading-relaxed)] text-[var(--fg-muted)] list-disc marker:text-[var(--fg-subtle)]">
+            <ul className="flex flex-col gap-[var(--space-2)] pl-[var(--space-4)] sm:pl-[var(--space-6)] text-[var(--text-xs)] sm:text-[var(--text-sm)] leading-[var(--leading-relaxed)] text-[var(--fg-muted)] list-disc marker:text-[var(--fg-subtle)]">
               <li>
                 <strong className="text-[var(--fg-default)]">Gas efficiency</strong> — Optimized
                 contract bytecode reduces deployment costs on Base L2
@@ -813,17 +843,17 @@ a larger share of the ecosystem`}
               transaction costs and faster confirmation times.
             </Paragraph>
 
-            <div className="grid gap-[var(--space-4)] sm:grid-cols-3">
+            <div className="grid grid-cols-3 gap-[var(--space-2)] sm:gap-[var(--space-4)]">
               {[
                 { label: "Settlement", value: "Ethereum L1" },
                 { label: "Block time", value: "~2 seconds" },
                 { label: "Gas costs", value: "Fraction of L1" },
               ].map((item) => (
-                <Card key={item.label} variant="default" padding="md">
+                <Card key={item.label} variant="default" padding="sm" className="sm:p-[var(--space-4)]">
                   <CardContent>
                     <VStack gap="xs" align="center" className="text-center">
                       <Text variant="caption" color="subtle">{item.label}</Text>
-                      <Text variant="body" className="font-[var(--font-semibold)]">{item.value}</Text>
+                      <Text variant="body-sm" className="font-[var(--font-semibold)] sm:text-[var(--text-base)]">{item.value}</Text>
                     </VStack>
                   </CardContent>
                 </Card>
@@ -837,7 +867,24 @@ a larger share of the ecosystem`}
               through the pip interface.
             </Paragraph>
 
-            <div className="overflow-hidden rounded-[var(--radius-lg)] border border-[var(--border-default)]">
+            {/* Contract addresses — stacked cards on mobile, table on sm+ */}
+            <div className="flex flex-col gap-[var(--space-2)] sm:hidden">
+              {[
+                { name: "Clanker Factory v4", address: CONTRACTS.clankerFactoryV4 },
+                { name: "Fee Locker v4", address: CONTRACTS.clankerFeeLockerV4 },
+                { name: "Clanker Vault", address: CONTRACTS.clankerVault },
+                { name: "WETH", address: CONTRACTS.weth },
+                { name: "$PIPAI Token", address: CONTRACTS.pipaiToken },
+              ].map((c) => (
+                <div key={c.name} className="rounded-[var(--radius-md)] border border-[var(--border-default)] bg-[var(--bg-raised)] p-[var(--space-3)]">
+                  <Text variant="caption" color="subtle" className="mb-[var(--space-1)]">{c.name}</Text>
+                  <code className="block break-all font-[var(--font-family-mono)] text-[var(--text-xs)] text-[var(--fg-default)] leading-[var(--leading-relaxed)]">
+                    {c.address}
+                  </code>
+                </div>
+              ))}
+            </div>
+            <div className="hidden sm:block overflow-hidden rounded-[var(--radius-lg)] border border-[var(--border-default)]">
               <table className="w-full text-[var(--text-sm)]">
                 <thead>
                   <tr className="border-b border-[var(--border-default)] bg-[var(--bg-subtle)]">
@@ -909,8 +956,8 @@ a larger share of the ecosystem`}
               As a creator (the person a token was created for), you have two main benefits:
             </Paragraph>
 
-            <div className="grid gap-[var(--space-4)] sm:grid-cols-2">
-              <Card variant="default" padding="lg">
+            <div className="grid gap-[var(--space-2)] sm:gap-[var(--space-4)] sm:grid-cols-2">
+              <Card variant="default" padding="md" className="sm:p-[var(--space-6)]">
                 <CardContent>
                   <VStack gap="sm">
                     <Badge variant="success">Vested Tokens</Badge>
@@ -922,7 +969,7 @@ a larger share of the ecosystem`}
                   </VStack>
                 </CardContent>
               </Card>
-              <Card variant="default" padding="lg">
+              <Card variant="default" padding="md" className="sm:p-[var(--space-6)]">
                 <CardContent>
                   <VStack gap="sm">
                     <Badge variant="primary">Trading Fees</Badge>
@@ -974,7 +1021,7 @@ a larger share of the ecosystem`}
               and claim your fees through the dashboard. Key things to know:
             </Paragraph>
 
-            <ul className="flex flex-col gap-[var(--space-2)] pl-[var(--space-6)] text-[var(--text-sm)] leading-[var(--leading-relaxed)] text-[var(--fg-muted)] list-disc marker:text-[var(--fg-subtle)]">
+            <ul className="flex flex-col gap-[var(--space-2)] pl-[var(--space-4)] sm:pl-[var(--space-6)] text-[var(--text-xs)] sm:text-[var(--text-sm)] leading-[var(--leading-relaxed)] text-[var(--fg-muted)] list-disc marker:text-[var(--fg-subtle)]">
               <li>Fees accumulate in real-time with every trade</li>
               <li>No minimum claim amount — claim any amount at any time</li>
               <li>Fees are paid in the pool&apos;s underlying assets (token + WETH)</li>
@@ -987,7 +1034,7 @@ a larger share of the ecosystem`}
             {/* ── FAQ ───────────────────────────────────────────────────── */}
             <SectionHeading id="faq">Frequently Asked Questions</SectionHeading>
 
-            <div className="flex flex-col gap-[var(--space-4)]">
+            <div className="flex flex-col gap-[var(--space-2)] sm:gap-[var(--space-4)]">
               {[
                 {
                   q: "Can I create a token for any X account?",
@@ -1022,10 +1069,10 @@ a larger share of the ecosystem`}
                   a: "pip uses Privy for authentication, which supports most popular wallets including MetaMask, Coinbase Wallet, Rainbow, and WalletConnect-compatible wallets.",
                 },
               ].map((item, i) => (
-                <Card key={i} variant="default" padding="lg">
+                <Card key={i} variant="default" padding="md" className="sm:p-[var(--space-6)]">
                   <CardContent>
-                    <VStack gap="sm">
-                      <Text variant="body" className="font-[var(--font-semibold)]">
+                    <VStack gap="xs" className="sm:gap-[var(--space-3)]">
+                      <Text variant="body-sm" className="font-[var(--font-semibold)] text-[var(--fg-default)] sm:text-[var(--text-base)]">
                         {item.q}
                       </Text>
                       <Text variant="body-sm">{item.a}</Text>
@@ -1038,9 +1085,9 @@ a larger share of the ecosystem`}
             {/* ── CTA ───────────────────────────────────────────────────── */}
             <Separator className="my-[var(--space-4)]" />
 
-            <Card variant="elevated" padding="lg" className="border-[var(--border-strong)]">
+            <Card variant="elevated" padding="md" className="border-[var(--border-strong)] sm:p-[var(--space-6)]">
               <CardContent>
-                <VStack align="center" gap="md" className="py-[var(--space-4)] text-center">
+                <VStack align="center" gap="md" className="py-[var(--space-2)] sm:py-[var(--space-4)] text-center">
                   <Text variant="h3" align="center">
                     Ready to get started?
                   </Text>
@@ -1048,18 +1095,18 @@ a larger share of the ecosystem`}
                     Launch a token for any X profile in under a minute, or sign in to
                     claim tokens and fees for your profile.
                   </Text>
-                  <HStack gap="sm" wrap className="justify-center">
-                    <Link href="/launch">
-                      <Button variant="primary" size="lg">
+                  <div className="flex flex-col sm:flex-row gap-[var(--space-2)] sm:gap-[var(--space-3)] w-full sm:w-auto items-center">
+                    <Link href="/launch" className="w-full sm:w-auto">
+                      <Button variant="primary" size="lg" className="w-full sm:w-auto">
                         Launch a Token <IconArrowRight />
                       </Button>
                     </Link>
-                    <Link href="/dashboard">
-                      <Button variant="secondary" size="lg">
+                    <Link href="/dashboard" className="w-full sm:w-auto">
+                      <Button variant="secondary" size="lg" className="w-full sm:w-auto">
                         Go to Dashboard
                       </Button>
                     </Link>
-                  </HStack>
+                  </div>
                 </VStack>
               </CardContent>
             </Card>

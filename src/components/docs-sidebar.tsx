@@ -22,27 +22,6 @@ interface DocsSidebarProps {
  * ICONS
  * ────────────────────────────────────────────────────────────────────────── */
 
-function IconMenu({ className }: { className?: string }) {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="20"
-      height="20"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className={className}
-    >
-      <line x1="4" x2="20" y1="12" y2="12" />
-      <line x1="4" x2="20" y1="6" y2="6" />
-      <line x1="4" x2="20" y1="18" y2="18" />
-    </svg>
-  );
-}
-
 function IconX({ className }: { className?: string }) {
   return (
     <svg
@@ -63,6 +42,25 @@ function IconX({ className }: { className?: string }) {
   );
 }
 
+function IconBook({ className }: { className?: string }) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H19a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1H6.5a1 1 0 0 1 0-5H20" />
+    </svg>
+  );
+}
+
 /* ─────────────────────────────────────────────────────────────────────────────
  * SIDEBAR COMPONENT
  * ────────────────────────────────────────────────────────────────────────── */
@@ -70,6 +68,18 @@ function IconX({ className }: { className?: string }) {
 export function DocsSidebar({ sections }: DocsSidebarProps) {
   const [activeId, setActiveId] = useState<string>("");
   const [isOpen, setIsOpen] = useState(false);
+
+  /* Lock body scroll when mobile sidebar is open */
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isOpen]);
 
   /* Scroll-spy: observe section headings and update active ID */
   useEffect(() => {
@@ -123,25 +133,28 @@ export function DocsSidebar({ sections }: DocsSidebarProps) {
 
   return (
     <>
-      {/* Mobile toggle */}
+      {/* Mobile toggle — fixed bottom-right FAB */}
       <button
         onClick={() => setIsOpen(!isOpen)}
         className={cn(
-          "fixed bottom-[var(--space-4)] right-[var(--space-4)] z-[var(--z-overlay)]",
+          "fixed bottom-[var(--space-4)] right-[var(--space-4)]",
+          /* z-index must be above sidebar (z-modal=40) and backdrop */
+          "z-[60]",
           "flex size-12 items-center justify-center rounded-full",
           "bg-[var(--accent-default)] text-white shadow-[var(--shadow-lg)]",
           "transition-all duration-200 hover:bg-[var(--accent-hover)]",
+          "active:scale-95",
           "lg:hidden"
         )}
         aria-label={isOpen ? "Close navigation" : "Open navigation"}
       >
-        {isOpen ? <IconX /> : <IconMenu />}
+        {isOpen ? <IconX /> : <IconBook />}
       </button>
 
       {/* Backdrop for mobile */}
       {isOpen && (
         <div
-          className="fixed inset-0 z-[var(--z-overlay)] bg-black/50 backdrop-blur-sm lg:hidden"
+          className="fixed inset-0 z-[var(--z-modal)] bg-black/60 backdrop-blur-sm lg:hidden"
           onClick={() => setIsOpen(false)}
         />
       )}
@@ -149,15 +162,18 @@ export function DocsSidebar({ sections }: DocsSidebarProps) {
       {/* Sidebar */}
       <aside
         className={cn(
-          "fixed top-0 left-0 z-[var(--z-modal)] h-dvh w-72 overflow-y-auto",
+          /* Mobile: slide-over from left */
+          "fixed top-0 left-0 z-[var(--z-modal)] h-dvh",
+          "w-[min(80vw,18rem)] overflow-y-auto overscroll-contain",
           "border-r border-[var(--border-default)] bg-[var(--bg-subtle)]",
-          "pt-[64px] pb-[var(--space-8)]",
+          "pt-[52px] pb-[var(--space-8)]",
           "transition-transform duration-300 ease-out",
-          "lg:sticky lg:top-[48px] lg:z-auto lg:h-[calc(100dvh-48px)] lg:translate-x-0 lg:pt-0",
+          /* Desktop: sticky sidebar */
+          "lg:sticky lg:top-[48px] lg:z-auto lg:h-[calc(100dvh-48px)] lg:w-72 lg:translate-x-0 lg:pt-0",
           isOpen ? "translate-x-0" : "-translate-x-full"
         )}
       >
-        <div className="px-[var(--space-4)] py-[var(--space-6)]">
+        <div className="px-[var(--space-3)] py-[var(--space-4)] sm:px-[var(--space-4)] sm:py-[var(--space-6)]">
           <Text
             variant="overline"
             color="accent"
@@ -171,10 +187,12 @@ export function DocsSidebar({ sections }: DocsSidebarProps) {
             <ul className="flex flex-col gap-[var(--space-0-5)]">
               {sections.map((section) => (
                 <li key={section.id}>
+                  {/* Parent section button — min 44px touch target */}
                   <button
                     onClick={() => handleClick(section.id)}
                     className={cn(
-                      "flex w-full items-center rounded-[var(--radius-md)] px-[var(--space-2)] py-[var(--space-1-5)]",
+                      "flex w-full items-center rounded-[var(--radius-md)]",
+                      "min-h-[44px] px-[var(--space-2)] py-[var(--space-2)]",
                       "text-left text-[var(--text-sm)] font-[var(--font-medium)]",
                       "transition-colors duration-150",
                       isParentActive(section)
@@ -190,14 +208,16 @@ export function DocsSidebar({ sections }: DocsSidebarProps) {
                     <ul className="ml-[var(--space-2)] mt-[var(--space-0-5)] flex flex-col gap-[var(--space-0-5)] border-l border-[var(--border-default)] pl-[var(--space-3)]">
                       {section.children.map((child) => (
                         <li key={child.id}>
+                          {/* Child button — min 44px touch target */}
                           <button
                             onClick={() => handleClick(child.id)}
                             className={cn(
-                              "flex w-full items-center rounded-[var(--radius-md)] px-[var(--space-2)] py-[var(--space-1)]",
+                              "flex w-full items-center rounded-[var(--radius-md)]",
+                              "min-h-[44px] px-[var(--space-2)] py-[var(--space-1-5)]",
                               "text-left text-[var(--text-sm)]",
                               "transition-colors duration-150",
                               isActive(child.id)
-                                ? "text-[var(--accent-default)]"
+                                ? "text-[var(--accent-default)] font-[var(--font-medium)]"
                                 : "text-[var(--fg-subtle)] hover:text-[var(--fg-muted)]"
                             )}
                           >
